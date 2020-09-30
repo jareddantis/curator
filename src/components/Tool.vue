@@ -20,7 +20,10 @@ export default defineComponent({
     icon: String,
     isWide: Boolean,
     name: String,
-    route: String
+    route: {
+      type: String,
+      required: true
+    }
   },
   methods: {
     navigate() {
