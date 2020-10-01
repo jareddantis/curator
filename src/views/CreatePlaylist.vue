@@ -1,5 +1,5 @@
 <template>
-  <div class="create-playlist">
+  <div class="create-playlist view-body">
     <Header>
       <template v-slot:default>Create playlist</template>
     </Header>
@@ -12,6 +12,7 @@
           maxlength="100"
           v-model="playlistName"
         />
+        <span>{{ playlistName.length }} / 100</span>
       </div>
       <div class="field">
         <label for="playlist-desc">Description</label>
@@ -21,20 +22,36 @@
           maxlength="300"
           v-model="playlistDesc"
         />
+        <span>{{ playlistDesc.length }} / 100</span>
       </div>
       <div class="field level">
         <div class="left">
-          <label for="playlist-art">Artwork</label>
-          <p>Please ensure that you hold rights over the artwork you choose.</p>
+          <div>
+            <label for="playlist-art">Artwork</label>
+            <p>
+              Please ensure that you hold rights over the artwork you choose.
+            </p>
+          </div>
         </div>
-        <div class="right">
-          <input type="file" id="playlist-art" />
+        <div class="right file">
+          <input
+            type="file"
+            id="playlist-art"
+            accept="image/png,image/jpeg"
+            @change="onArtChanged"
+          />
+          <label for="playlist-art" id="playlist-art-preview">
+            <i class="la la-plus"></i>
+            <i class="la la-times" @click="resetArt"></i>
+          </label>
         </div>
       </div>
       <div class="field level">
         <div class="left">
-          <label for="playlist-privacy">Make this playlist public</label>
-          <p>Will be visible on your Spotify profile</p>
+          <div>
+            <label for="playlist-privacy">Make this playlist public</label>
+            <p>Will be visible on your Spotify profile</p>
+          </div>
         </div>
         <div class="right checkbox">
           <input
@@ -42,7 +59,7 @@
             id="playlist-privacy"
             v-model="playlistPrivacy"
           />
-          <label for="playlist-privacy" class="fake-checkbox">
+          <label for="playlist-privacy">
             <i class="la la-toggle-on"></i>
             <i class="la la-toggle-off"></i>
           </label>
@@ -50,12 +67,14 @@
       </div>
       <div class="field level">
         <div class="left">
-          <label for="playlist-perms">Allow collaboration</label>
-          <p>Other people will be able to edit</p>
+          <div>
+            <label for="playlist-perms">Allow collaboration</label>
+            <p>Other people will be able to edit</p>
+          </div>
         </div>
         <div class="right checkbox">
           <input type="checkbox" id="playlist-perms" v-model="playlistPerms" />
-          <label for="playlist-perms" class="fake-checkbox">
+          <label for="playlist-perms">
             <i class="la la-toggle-on"></i>
             <i class="la la-toggle-off"></i>
           </label>
@@ -63,8 +82,10 @@
       </div>
       <div class="field level">
         <div class="left">
-          <label for="playlist-populate">Add tracks now</label>
-          <p>You can always do this later</p>
+          <div>
+            <label for="playlist-populate">Add tracks now</label>
+            <p>You can always do this later</p>
+          </div>
         </div>
         <div class="right checkbox">
           <input
@@ -72,7 +93,7 @@
             id="playlist-populate"
             v-model="playlistPopulate"
           />
-          <label for="playlist-populate" class="fake-checkbox">
+          <label for="playlist-populate">
             <i class="la la-toggle-on"></i>
             <i class="la la-toggle-off"></i>
           </label>
@@ -102,8 +123,49 @@ export default defineComponent({
       playlistDesc: "",
       playlistPrivacy: true,
       playlistPerms: false,
-      playlistPopulate: false
+      playlistPopulate: false,
+      playlistArt: null
     };
+  },
+  methods: {
+    onArtChanged(e: HTMLInputEvent) {
+      const { files } = e.target;
+      const el = document.getElementById(
+        "playlist-art-preview"
+      ) as HTMLLabelElement;
+      if (!!files && files.length && !!files[0]) {
+        const reader = new FileReader();
+
+        reader.onload = (function(previewElement) {
+          return function(ev: ProgressEvent<FileReader>) {
+            if (!!ev.target && typeof ev.target.result == "string") {
+              console.log(ev.target);
+              previewElement.style.backgroundImage = `url("${ev.target.result}"`;
+              previewElement.classList.add("populated");
+            } else {
+              previewElement.style.backgroundImage = "";
+              previewElement.classList.remove("populated");
+            }
+          };
+        })(el);
+        reader.readAsDataURL(files[0]);
+      } else {
+        el.style.backgroundImage = "";
+        el.classList.remove("populated");
+      }
+    },
+    resetArt(e: HTMLInputEvent) {
+      e.preventDefault();
+      const fileInput = document.getElementById(
+        "playlist-art"
+      ) as HTMLInputElement;
+      const preview = document.getElementById(
+        "playlist-art-preview"
+      ) as HTMLLabelElement;
+      fileInput.value = "";
+      preview.style.backgroundImage = "";
+      preview.classList.remove("populated");
+    }
   }
 });
 </script>
@@ -125,18 +187,35 @@ export default defineComponent({
       padding: 0.5rem 1rem;
       font-size: 1.25rem;
       margin-top: 0.5rem;
+
+      &:focus ~ span,
+      &:focus-within ~ span {
+        display: block;
+      }
     }
     label {
       display: block;
       font-weight: bold;
       margin-bottom: 0.25rem;
     }
+    span {
+      display: none;
+      font-size: 0.8rem;
+      text-align: right;
+      margin-top: 0.75rem;
+    }
     &.level {
       display: grid;
       grid-template-columns: [left] auto [right] 4rem;
       grid-template-rows: 1fr;
+      grid-column-gap: 1rem;
 
+      & > div {
+        display: flex;
+        align-items: center;
+      }
       .left {
+        justify-content: start;
         grid-area: left;
 
         p {
@@ -147,16 +226,62 @@ export default defineComponent({
       .right {
         grid-area: right;
         text-align: right;
+        justify-self: end;
 
+        input {
+          position: absolute;
+          left: -999999rem;
+        }
+        label {
+          cursor: pointer;
+          user-select: none;
+          outline: none;
+          font-size: 2.5rem;
+          margin: 0;
+        }
+        &.file {
+          label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border: 1px solid black;
+            width: 4rem;
+            height: 4rem;
+            position: relative;
+
+            .la-times {
+              display: none;
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              z-index: 4;
+            }
+            &.populated {
+              background-size: cover;
+
+              &:after {
+                display: block;
+                content: " ";
+                background: rgba(255, 255, 255, 0.4);
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+              }
+              .la-plus {
+                display: none;
+              }
+              .la-times {
+                display: block;
+              }
+            }
+          }
+        }
         &.checkbox {
-          display: flex;
-          align-items: center;
-          justify-content: flex-end;
-
-          .fake-checkbox {
-            font-size: 2.5rem;
-            cursor: pointer;
-
+          label {
             .la-toggle-off {
               display: block;
             }
@@ -164,14 +289,11 @@ export default defineComponent({
               display: none;
             }
           }
-          input[type="checkbox"] {
-            position: absolute;
-            left: -999999rem;
-
-            &:checked ~ .fake-checkbox .la-toggle-on {
+          input {
+            &:checked ~ label .la-toggle-on {
               display: block;
             }
-            &:checked ~ .fake-checkbox .la-toggle-off {
+            &:checked ~ label .la-toggle-off {
               display: none;
             }
           }
