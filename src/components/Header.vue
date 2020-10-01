@@ -15,6 +15,6 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .view-header {
-  padding: 2rem 0;
+  padding: 0 0 2rem;
 }
 </style>
