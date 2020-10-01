@@ -74,6 +74,9 @@ export default defineComponent({
 * {
   box-sizing: border-box;
 }
+html {
+  touch-action: manipulation;
+}
 body {
   margin: 0;
 }
@@ -102,9 +105,12 @@ button {
 
 // Actual styles
 .app-view[with-margin="true"] {
-  max-width: 768px;
+  max-width: calc(768px + 4rem);
   width: 100%;
   margin: 0 auto 4rem;
+}
+.view-body {
+  margin: 0 2rem;
 }
 
 // Router transitions
