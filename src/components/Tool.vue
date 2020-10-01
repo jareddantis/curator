@@ -80,4 +80,13 @@ export default defineComponent({
     }
   }
 }
+
+@media screen and (max-width: 800px) {
+  i {
+    font-size: 1.5rem;
+  }
+  .tool-text {
+    font-size: 0.9rem;
+  }
+}
 </style>
