@@ -1,5 +1,5 @@
 <template>
-  <div class="tools">
+  <div class="tools view-body">
     <Header>
       <template v-slot:default>What would you like to do today?</template>
       <template v-slot:subtitle>
@@ -60,5 +60,11 @@ export default defineComponent({
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   grid-template-rows: auto;
   grid-gap: 1rem;
+}
+
+@media screen and (max-width: 800px) {
+  .tools-body {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 </style>
