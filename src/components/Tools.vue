@@ -17,7 +17,7 @@
       />
       <Tool icon="la la-trash" name="Delete playlists" route="/create" />
       <Tool icon="la la-random" name="Randomize tracks" route="/create" />
-      <Tool icon="la la-plus" name="Add tracks" route="/create" />
+      <Tool icon="la la-plus" name="Add tracks" route="/add" />
       <Tool
         icon="la la-filter"
         name="Prune playlists"
