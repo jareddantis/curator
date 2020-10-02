@@ -1,5 +1,5 @@
 import PKCEChallenge from "pkce-challenge";
-import Axios, { AxiosPromise } from "axios";
+import Axios from "axios";
 // @ts-ignore
 import { v4 as uuid } from "uuid";
 
@@ -38,17 +38,27 @@ export function generatePKCE(): { [key: string]: string } {
   };
 }
 
-export async function refreshAccessToken(
+export async function getRefreshedAccessToken(
   refreshToken: string
-): Promise<AxiosPromise> {
+): Promise<RefreshedTokenResponse> {
   const query = serialize({
     client_id: process.env.VUE_APP_CLIENT_ID,
     grant_type: "refresh_token",
     refresh_token: refreshToken
   });
-  return Axios.post("https://accounts.spotify.com/api/token", query, {
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
+  const { access_token, refresh_token, expires_in } = await Axios.post(
+    "https://accounts.spotify.com/api/token",
+    query,
+    {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      }
     }
-  });
+  );
+
+  return {
+    accessToken: access_token,
+    refreshToken: refresh_token,
+    expiry: parseInt(expires_in, 10) * 1000 + new Date().getTime()
+  };
 }
