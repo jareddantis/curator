@@ -22,11 +22,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject } from "vue";
+import { defineComponent } from "vue";
 import { mapState, useStore } from "vuex";
 import Navbar from "@/components/Navbar.vue";
 import Footer from "@/components/Footer.vue";
-import { SpotifyWebApi } from "spotify-web-api-ts";
 
 export default defineComponent({
   name: "App",
@@ -42,10 +41,8 @@ export default defineComponent({
     };
   },
   setup() {
-    const spotify = inject("spotify") as SpotifyWebApi;
     return {
-      store: useStore(),
-      spotify
+      store: useStore()
     };
   },
   created() {
@@ -61,7 +58,6 @@ export default defineComponent({
       }
       next();
     });
-    this.spotify.setAccessToken(this.accessToken);
   },
   methods: {
     beforeLeave(el: HTMLElement) {
@@ -79,11 +75,6 @@ export default defineComponent({
     afterEnter(el: HTMLElement) {
       el.style.height = "auto";
     }
-  },
-  provide() {
-    return {
-      spotify: this.spotify
-    };
   }
 });
 </script>

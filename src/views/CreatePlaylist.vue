@@ -1,28 +1,32 @@
 <template>
-  <div class="create-playlist view-body">
+  <div class="view-body">
     <Header>
       <template v-slot:default>Create playlist</template>
     </Header>
     <div class="playlist-form">
       <div class="field">
-        <label for="playlist-name">Name (required)</label>
+        <div class="counter">
+          <label for="playlist-name">Name (required)</label>
+          <span>{{ playlistName.length }} / 100</span>
+        </div>
         <input
           type="text"
           id="playlist-name"
           maxlength="100"
           v-model="playlistName"
         />
-        <span>{{ playlistName.length }} / 100</span>
       </div>
       <div class="field">
-        <label for="playlist-desc">Description</label>
+        <div class="counter">
+          <label for="playlist-desc">Description</label>
+          <span>{{ playlistDesc.length }} / 100</span>
+        </div>
         <input
           type="text"
           id="playlist-desc"
           maxlength="300"
           v-model="playlistDesc"
         />
-        <span>{{ playlistDesc.length }} / 100</span>
       </div>
       <div class="field level">
         <div class="left">
@@ -37,20 +41,21 @@
           <input
             type="file"
             id="playlist-art"
-            accept="image/png,image/jpeg"
+            accept="image/jpeg"
             @change="onArtChanged"
           />
-          <label for="playlist-art" id="playlist-art-preview">
+          <label for="playlist-art" ref="preview">
             <i class="la la-plus"></i>
             <i class="la la-times" @click="resetArt"></i>
           </label>
         </div>
       </div>
-      <div class="field level">
+      <div class="field level" :disabled="playlistPerms">
         <div class="left">
           <div>
             <label for="playlist-privacy">Make this playlist public</label>
-            <p>Will be visible on your Spotify profile</p>
+            <p v-if="playlistPerms">Collaborative playlists must be private</p>
+            <p v-else>Will be visible on your Spotify profile</p>
           </div>
         </div>
         <div class="right checkbox">
@@ -58,6 +63,7 @@
             type="checkbox"
             id="playlist-privacy"
             v-model="playlistPrivacy"
+            :disabled="playlistPerms"
           />
           <label for="playlist-privacy">
             <i class="la la-toggle-on"></i>
@@ -65,15 +71,23 @@
           </label>
         </div>
       </div>
-      <div class="field level">
+      <div class="field level" :disabled="playlistPrivacy">
         <div class="left">
           <div>
             <label for="playlist-perms">Allow collaboration</label>
-            <p>Other people will be able to edit</p>
+            <p v-if="playlistPrivacy">
+              Collaborative playlists cannot be public
+            </p>
+            <p v-else>Other people will be able to edit</p>
           </div>
         </div>
         <div class="right checkbox">
-          <input type="checkbox" id="playlist-perms" v-model="playlistPerms" />
+          <input
+            type="checkbox"
+            id="playlist-perms"
+            v-model="playlistPerms"
+            :disabled="playlistPrivacy"
+          />
           <label for="playlist-perms">
             <i class="la la-toggle-on"></i>
             <i class="la la-toggle-off"></i>
@@ -100,71 +114,122 @@
         </div>
       </div>
       <div class="submit">
-        <RoundButton full-width>Proceed</RoundButton>
+        <RoundButton full-width @click="submit" :disabled="task.isRunning"
+          >Proceed</RoundButton
+        >
       </div>
     </div>
+    <Modal loading :visible="task.isRunning">Creating playlist</Modal>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { mapState, useStore } from "vuex";
 import Header from "@/components/Header.vue";
 import RoundButton from "@/components/RoundButton.vue";
+import Modal from "@/components/Modal.vue";
+import useCreatePlaylistTask from "@/api/composables/CreatePlaylist";
 
 export default defineComponent({
   name: "CreatePlaylist",
   components: {
     Header,
-    RoundButton
+    RoundButton,
+    Modal
   },
+  computed: mapState(["accessToken", "id"]),
   data() {
     return {
+      loading: false,
       playlistName: "",
       playlistDesc: "",
       playlistPrivacy: true,
       playlistPerms: false,
-      playlistPopulate: false,
-      playlistArt: null
+      playlistPopulate: false
+    };
+  },
+  setup() {
+    return {
+      store: useStore(),
+      task: useCreatePlaylistTask()
     };
   },
   methods: {
     onArtChanged(e: HTMLInputEvent) {
       const { files } = e.target;
-      const el = document.getElementById(
-        "playlist-art-preview"
-      ) as HTMLLabelElement;
+      const preview = this.$refs.preview as HTMLLabelElement;
+
       if (!!files && files.length && !!files[0]) {
+        const fileSize = Math.round(files[0].size / 1024);
+        if (fileSize > 256) {
+          window.alert(
+            `Your file is ${fileSize} KB. Playlist artwork must not exceed 256 KB.`
+          );
+          this.resetArt();
+          return;
+        }
         const reader = new FileReader();
 
-        reader.onload = (function(previewElement) {
+        reader.onload = (function(el: HTMLLabelElement) {
           return function(ev: ProgressEvent<FileReader>) {
             if (!!ev.target && typeof ev.target.result == "string") {
-              console.log(ev.target);
-              previewElement.style.backgroundImage = `url("${ev.target.result}"`;
-              previewElement.classList.add("populated");
+              const imageData = ev.target.result;
+              el.style.backgroundImage = `url("${imageData}"`;
+              el.classList.add("populated");
             } else {
-              previewElement.style.backgroundImage = "";
-              previewElement.classList.remove("populated");
+              el.style.backgroundImage = "";
+              el.classList.remove("populated");
             }
           };
-        })(el);
+        })(preview);
         reader.readAsDataURL(files[0]);
       } else {
-        el.style.backgroundImage = "";
-        el.classList.remove("populated");
+        preview.style.backgroundImage = "";
+        preview.classList.remove("populated");
       }
     },
-    resetArt(e: HTMLInputEvent) {
-      e.preventDefault();
+    resetArt(e?: HTMLInputEvent) {
+      e?.preventDefault();
       const fileInput = document.getElementById(
         "playlist-art"
       ) as HTMLInputElement;
-      const preview = document.getElementById(
-        "playlist-art-preview"
-      ) as HTMLLabelElement;
+      const preview = this.$refs.preview as HTMLLabelElement;
       fileInput.value = "";
       preview.style.backgroundImage = "";
       preview.classList.remove("populated");
+    },
+    submit() {
+      if (this.playlistName.length) {
+        const art = (this.$refs
+          .preview as HTMLLabelElement).style.backgroundImage.split('"')[1];
+        this.task
+          .perform(this.id, this.accessToken, {
+            name: this.playlistName,
+            collaborative: this.playlistPerms,
+            isPublic: this.playlistPrivacy,
+            description: this.playlistDesc,
+            art
+          })
+          .then((id: string) => {
+            console.log("Success!");
+            this.$router.push("/");
+          });
+      } else {
+        window.alert("Please specify a playlist name.");
+      }
+    }
+  },
+  watch: {
+    playlistPerms(before, after) {
+      if (after && this.playlistPrivacy) {
+        this.playlistPrivacy = false;
+      }
+    },
+    playlistPrivacy(before, after) {
+      if (after && this.playlistPerms) {
+        this.playlistPerms = false;
+      }
     }
   }
 });
@@ -182,27 +247,30 @@ export default defineComponent({
     margin-top: 2rem;
   }
   .field {
+    &[disabled="true"] {
+      opacity: 0.7;
+      pointer-events: none;
+    }
     input[type="text"] {
       width: 100%;
       padding: 0.5rem 1rem;
       font-size: 1.25rem;
       margin-top: 0.5rem;
+    }
+    .counter {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
 
-      &:focus ~ span,
-      &:focus-within ~ span {
-        display: block;
+      span {
+        font-size: 0.8rem;
+        text-align: right;
       }
     }
     label {
       display: block;
       font-weight: bold;
       margin-bottom: 0.25rem;
-    }
-    span {
-      display: none;
-      font-size: 0.8rem;
-      text-align: right;
-      margin-top: 0.75rem;
     }
     &.level {
       display: grid;
