@@ -69,8 +69,15 @@ export default defineComponent({
     },
     authListener(event: MessageEvent) {
       if (event.data?.type == "curator") {
-        const { accessToken, refreshToken, userCountry, userID } = event.data;
+        const {
+          accessToken,
+          refreshToken,
+          expiry,
+          userCountry,
+          userID
+        } = event.data;
         this.store.commit("setAccessToken", accessToken);
+        this.store.commit("setExpiry", expiry);
         this.store.commit("setRefreshToken", refreshToken);
         this.store.commit("setCountry", userCountry);
         this.store.commit("setID", userID);

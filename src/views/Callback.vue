@@ -34,7 +34,7 @@ export default defineComponent({
       if (Object.prototype.hasOwnProperty.call(this.$route.query, "code")) {
         try {
           // Request access token
-          const { access_token, refresh_token } = (
+          const { access_token, refresh_token, expires_in } = (
             await Axios.post(
               "https://accounts.spotify.com/api/token",
               serialize({
@@ -60,11 +60,18 @@ export default defineComponent({
             })
           ).data;
 
-          if (!!access_token && !!refresh_token && !!country && !!id) {
+          if (
+            !!access_token &&
+            !!refresh_token &&
+            !!expires_in &&
+            !!country &&
+            !!id
+          ) {
             if (window.opener) {
               window.opener.postMessage({
                 type: "curator",
                 accessToken: access_token,
+                expiry: parseInt(expires_in, 10) * 1000 + new Date().getTime(),
                 refreshToken: refresh_token,
                 userCountry: country,
                 userID: id
