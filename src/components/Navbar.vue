@@ -1,26 +1,32 @@
 <template>
-  <nav role="navigation" :sticky="isLoggedIn" :transparent="isTransparent">
+  <nav
+    role="navigation"
+    :sticky="isLoggedIn"
+    :transparent="isTransparent"
+    v-show="$route.name !== 'Callback'"
+  >
     <ul class="nav-content" :narrow="isLoggedIn">
-      <li class="nav-left" v-show="hasBackButton" @click="$router.go(-1)">
+      <li
+        class="nav-left"
+        v-show="$route.name !== 'Home'"
+        @click="$router.go(-1)"
+      >
         <i class="la la-arrow-left"></i>
       </li>
       <li class="nav-brand" @click="scrollToTop">
-        <img src="@/assets/logo.svg" alt="Curator" />
+        <img src="/img/logo.svg" alt="Curator" />
         <h3 v-show="!isLoggedIn">Curator</h3>
       </li>
-      <li class="nav-right" v-if="isLoggedIn">
+      <li class="nav-right">
         <i class="la la-angle-down"></i>
         <ul class="dropdown">
-          <li @click="store.commit('logout')">
+          <li @click="store.commit('setLogin', false)">
             <span class="title">Sign out</span>
             <span class="subtitle">
               Signed in as <strong>aureljared</strong>
             </span>
           </li>
         </ul>
-      </li>
-      <li class="nav-right" v-else>
-        <RoundButton small @click="store.commit('login')">Sign in</RoundButton>
       </li>
     </ul>
   </nav>
@@ -29,13 +35,9 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { mapState, useStore } from "vuex";
-import RoundButton from "@/components/RoundButton.vue";
 
 export default defineComponent({
   name: "Navbar",
-  components: {
-    RoundButton
-  },
   props: {
     hasBackButton: Boolean
   },

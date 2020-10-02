@@ -3,9 +3,7 @@
     <div class="hero"></div>
     <div class="cta">
       <h1>Welcome to Curator,<br />the playlist manager</h1>
-      <RoundButton @click="store.commit('login')"
-        >Sign in with Spotify</RoundButton
-      >
+      <RoundButton @click="login">Sign in with Spotify</RoundButton>
     </div>
     <div class="features">
       <div class="feature">
@@ -40,6 +38,7 @@
 import { defineComponent } from "vue";
 import { useStore } from "vuex";
 import RoundButton from "@/components/RoundButton.vue";
+import { generatePKCE } from "@/api/spotify-auth";
 
 export default defineComponent({
   name: "Intro",
@@ -50,6 +49,34 @@ export default defineComponent({
     return {
       store: useStore()
     };
+  },
+  methods: {
+    login() {
+      const { authURL, codeVerifier, state } = generatePKCE();
+      const windowName = "Sign in to Curator";
+      const features =
+        "toolbar=no, menubar=no, width=600, height=700, top=100, left=100";
+
+      this.store.commit("setStateToken", state);
+      this.store.commit("setVerifier", codeVerifier);
+      window.removeEventListener("message", this.authListener);
+      window.open(authURL, windowName, features)?.focus();
+      window.addEventListener(
+        "message",
+        event => this.authListener(event),
+        false
+      );
+    },
+    authListener(event: MessageEvent) {
+      if (event.data?.type == "curator") {
+        const { accessToken, refreshToken, userCountry, userID } = event.data;
+        this.store.commit("setAccessToken", accessToken);
+        this.store.commit("setRefreshToken", refreshToken);
+        this.store.commit("setCountry", userCountry);
+        this.store.commit("setID", userID);
+        this.store.commit("setLogin", true);
+      }
+    }
   }
 });
 </script>
@@ -58,7 +85,7 @@ export default defineComponent({
 .hero {
   width: 100%;
   height: 100vh;
-  background: url("../assets/intro-art.svg") no-repeat right top;
+  background: url("/img/intro-art.svg") no-repeat right top;
 }
 .cta {
   position: absolute;

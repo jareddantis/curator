@@ -1,9 +1,9 @@
 <template>
-  <div class="footer">
+  <div class="footer" v-show="$route.name !== 'Callback'">
     <div class="footer-content">
       <div class="brand">
         <div class="logo">
-          <img src="@/assets/logo.svg" alt="Curator" />
+          <img src="/img/logo.svg" alt="Curator" />
         </div>
         <h3>Curator</h3>
       </div>

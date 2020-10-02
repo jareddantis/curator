@@ -1,6 +1,10 @@
 <template>
-  <Navbar :has-back-button="$route.name !== 'Home'" />
-  <div class="app-view" :with-margin="isLoggedIn">
+  <Navbar />
+  <div
+    class="app-view"
+    :with-margin="isLoggedIn"
+    v-if="$route.name !== 'Callback'"
+  >
     <router-view v-slot="{ Component }">
       <transition
         :name="transitionName"
@@ -13,14 +17,16 @@
       </transition>
     </router-view>
   </div>
+  <router-view v-else></router-view>
   <Footer />
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, inject } from "vue";
+import { mapState, useStore } from "vuex";
 import Navbar from "@/components/Navbar.vue";
 import Footer from "@/components/Footer.vue";
-import { mapState } from "vuex";
+import { SpotifyWebApi } from "spotify-web-api-ts";
 
 export default defineComponent({
   name: "App",
@@ -28,11 +34,18 @@ export default defineComponent({
     Navbar,
     Footer
   },
-  computed: mapState(["isLoggedIn"]),
+  computed: mapState(["isLoggedIn", "accessToken", "refreshToken"]),
   data() {
     return {
       prevHeight: "0",
       transitionName: "zoom-in"
+    };
+  },
+  setup() {
+    const spotify = inject("spotify") as SpotifyWebApi;
+    return {
+      store: useStore(),
+      spotify
     };
   },
   created() {
@@ -48,6 +61,7 @@ export default defineComponent({
       }
       next();
     });
+    this.spotify.setAccessToken(this.accessToken);
   },
   methods: {
     beforeLeave(el: HTMLElement) {
@@ -65,6 +79,11 @@ export default defineComponent({
     afterEnter(el: HTMLElement) {
       el.style.height = "auto";
     }
+  },
+  provide() {
+    return {
+      spotify: this.spotify
+    };
   }
 });
 </script>
@@ -76,9 +95,12 @@ export default defineComponent({
 }
 html {
   touch-action: manipulation;
+  min-height: 100vh;
+  background: #232323;
 }
 body {
   margin: 0;
+  background: white;
 }
 h1,
 h2,
