@@ -1,5 +1,5 @@
 <template>
-  <button :full-width="fullWidth" :small="small">
+  <button :full-width="fullWidth" :small="small" :disabled="disabled">
     <slot></slot>
   </button>
 </template>
@@ -11,7 +11,8 @@ export default defineComponent({
   name: "RoundButton",
   props: {
     fullWidth: Boolean,
-    small: Boolean
+    small: Boolean,
+    disabled: Boolean
   }
 });
 </script>
