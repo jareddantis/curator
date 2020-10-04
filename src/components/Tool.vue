@@ -88,7 +88,7 @@ export default defineComponent({
       font-size: 1.5rem;
     }
     .tool-text {
-      font-size: 0.9rem;
+      font-size: 1rem;
     }
   }
 }
@@ -100,6 +100,9 @@ export default defineComponent({
   .tool-content {
     i {
       font-size: 1.25rem;
+    }
+    .tool-text {
+      font-size: 0.9rem;
     }
   }
 }

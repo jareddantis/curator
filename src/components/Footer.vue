@@ -149,4 +149,9 @@ export default defineComponent({
     grid-template-columns: 1fr;
   }
 }
+@media screen and (max-width: 480px) {
+  .footer {
+    padding: 1.5rem;
+  }
+}
 </style>

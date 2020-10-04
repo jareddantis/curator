@@ -124,6 +124,14 @@ button {
 .view-body {
   margin: 0 2rem;
 }
+@media screen and (max-width: 480px) {
+  .app-view[with-margin="true"] {
+    margin-bottom: 1.5rem;
+  }
+  .view-body {
+    margin: 0 1.5rem;
+  }
+}
 
 // Router transitions
 .zoom-in-leave-from,

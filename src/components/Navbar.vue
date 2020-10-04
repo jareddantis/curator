@@ -118,7 +118,7 @@ ul {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 1.5rem;
+  margin: 1.5rem 2rem;
 
   &[narrow="true"] {
     max-width: 768px;
@@ -193,6 +193,12 @@ ul {
         display: block;
       }
     }
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .nav-content {
+    margin: 1.5rem;
   }
 }
 </style>
