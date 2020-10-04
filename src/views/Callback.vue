@@ -1,7 +1,7 @@
 <template>
   <div class="callback">
     <div class="callback-content">
-      <img src="/img/logo.svg" alt="Curator" />
+      <img src="@/img/logo.svg" alt="Curator" />
       <h3>{{ status }}</h3>
     </div>
   </div>

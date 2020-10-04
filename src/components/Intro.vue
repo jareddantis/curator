@@ -94,7 +94,7 @@ export default defineComponent({
 .hero {
   width: 100%;
   height: 100vh;
-  background: url("/img/intro-art.svg") no-repeat right top;
+  background: url("../img/intro.svg") no-repeat right top;
 }
 .cta {
   position: absolute;

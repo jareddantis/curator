@@ -14,7 +14,7 @@
         <i class="la la-arrow-left"></i>
       </li>
       <li class="nav-brand" @click="scrollToTop">
-        <img src="/img/logo.svg" alt="Curator" />
+        <img src="@/img/logo.svg" alt="Curator" />
         <h3 v-show="!isLoggedIn">Curator</h3>
       </li>
       <li class="nav-right">
