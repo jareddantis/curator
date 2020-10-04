@@ -81,6 +81,8 @@ export default defineComponent({
         this.store.commit("setRefreshToken", refreshToken);
         this.store.commit("setCountry", userCountry);
         this.store.commit("setID", userID);
+        this.store.commit("setStateToken", "");
+        this.store.commit("setVerifier", "");
         this.store.commit("setLogin", true);
       }
     }
