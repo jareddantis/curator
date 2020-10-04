@@ -29,19 +29,18 @@ export default createStore({
   },
   actions: {
     async getUpdatedToken({ getters, commit }) {
-      let token = getters.access;
       if (getters.expired) {
-        const {
-          accessToken,
-          refreshToken,
-          expiry
-        } = await getRefreshedAccessToken(getters.refresh);
-        token = accessToken;
-        commit("setAccessToken", accessToken);
-        commit("setExpiry", expiry);
-        commit("setRefreshToken", refreshToken);
+        return await getRefreshedAccessToken(getters.refresh).then(result => {
+          const { accessToken, refreshToken, expiry } = result;
+          commit("setAccessToken", accessToken);
+          commit("setExpiry", expiry);
+          commit("setRefreshToken", refreshToken);
+          return accessToken;
+        });
       }
-      return token;
+      return new Promise(resolve => {
+        resolve(getters.access);
+      });
     }
   },
   getters: {
