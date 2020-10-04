@@ -41,6 +41,12 @@ export default createStore({
       return new Promise(resolve => {
         resolve(getters.access);
       });
+    },
+    reset({ state }) {
+      const freshState = getInitialState();
+      Object.keys(freshState).forEach(key => {
+        state[key] = freshState[key];
+      });
     }
   },
   getters: {

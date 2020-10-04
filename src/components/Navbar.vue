@@ -20,10 +20,10 @@
       <li class="nav-right">
         <i class="la la-angle-down"></i>
         <ul class="dropdown">
-          <li @click="store.commit('setLogin', false)">
+          <li @click="store.dispatch('reset')">
             <span class="title">Sign out</span>
             <span class="subtitle">
-              Signed in as <strong>aureljared</strong>
+              Signed in as <strong>{{ id }}</strong>
             </span>
           </li>
         </ul>
@@ -41,16 +41,16 @@ export default defineComponent({
   props: {
     hasBackButton: Boolean
   },
-  data() {
-    return {
-      y: 0
-    };
-  },
   computed: {
     isTransparent(): boolean {
       return this.isLoggedIn ? false : this.y < 32;
     },
-    ...mapState(["isLoggedIn"])
+    ...mapState(["isLoggedIn", "id"])
+  },
+  data() {
+    return {
+      y: 0
+    };
   },
   setup() {
     return {
