@@ -3,30 +3,40 @@
     <div class="footer-content">
       <div class="brand">
         <div class="logo">
-          <img src="/img/logo.svg" alt="Curator" />
+          <img src="@/img/logo.svg" alt="Curator" />
         </div>
         <h3>Curator</h3>
       </div>
       <div class="sections">
         <div class="section">
           <h6>About</h6>
-          <p>build X by <strong>Jared Dantis</strong></p>
+          <p>
+            build {{ buildDate }} by
+            <a href="//jared.gq" target="_blank" rel="noopener">
+              <strong>Jared Dantis</strong>
+            </a>
+          </p>
           <a
             href="//github.com/jareddantis/curator"
             target="_blank"
             rel="noopener"
+            standalone
             >GitHub repository <i class="las la-external-link-alt"></i
           ></a>
-          <a href="//google.com" target="_blank" rel="noopener"
+          <a href="//google.com" target="_blank" rel="noopener" standalone
             >Send feedback <i class="las la-external-link-alt"></i
           ></a>
         </div>
         <div class="section">
           <h6>Donate</h6>
-          <a href="//paypal.me/jareddantis" target="_blank" rel="noopener"
+          <a
+            href="//paypal.me/jareddantis"
+            target="_blank"
+            rel="noopener"
+            standalone
             >PayPal <i class="las la-external-link-alt"></i
           ></a>
-          <a href="//ko-fi.com/dantis" target="_blank" rel="noopener"
+          <a href="//ko-fi.com/dantis" target="_blank" rel="noopener" standalone
             >Ko-fi <i class="las la-external-link-alt"></i
           ></a>
           <p>
@@ -56,7 +66,12 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "Footer"
+  name: "Footer",
+  data() {
+    return {
+      buildDate: process.env.BUILD_DATE
+    };
+  }
 });
 </script>
 
@@ -111,12 +126,14 @@ export default defineComponent({
       margin-bottom: 1rem;
     }
     a {
-      display: block;
       color: white;
       font-weight: bolder;
       text-decoration: none;
       margin: 0.5rem 0;
 
+      &[standalone] {
+        display: block;
+      }
       &:hover {
         color: #aaa;
       }
