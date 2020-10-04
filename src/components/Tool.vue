@@ -42,6 +42,7 @@ export default defineComponent({
   height: 8rem;
   transition: all 150ms cubic-bezier(0.22, 1, 0.36, 1);
   cursor: pointer;
+  user-select: none;
 
   &:hover {
     background-color: #232323;
