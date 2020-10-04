@@ -94,7 +94,7 @@ export default defineComponent({
 
 @media screen and (max-width: 480px) {
   .tools-body {
-    grid-template-columns: 1fr;
+    grid-gap: 0.5rem;
   }
 }
 </style>
