@@ -138,7 +138,7 @@ export default defineComponent({
     RoundButton,
     Modal
   },
-  computed: mapState(["accessToken", "id"]),
+  computed: mapState(["id"]),
   data() {
     return {
       loading: false,
@@ -199,12 +199,12 @@ export default defineComponent({
       preview.style.backgroundImage = "";
       preview.classList.remove("populated");
     },
-    submit() {
+    async submit() {
       if (this.playlistName.length) {
-        const art = (this.$refs
-          .preview as HTMLLabelElement).style.backgroundImage.split('"')[1];
+        const preview = this.$refs.preview as HTMLLabelElement;
+        const art = preview.style.backgroundImage.split('"')[1] || "";
         this.task
-          .perform(this.id, this.accessToken, {
+          .perform(this.id, await this.store.dispatch("getUpdatedToken"), {
             name: this.playlistName,
             collaborative: this.playlistPerms,
             isPublic: this.playlistPrivacy,
@@ -212,8 +212,11 @@ export default defineComponent({
             art
           })
           .then((id: string) => {
-            console.log("Success!");
-            this.$router.push("/");
+            if (this.playlistPopulate) {
+              this.$router.push(`/add-tracks/${id}`);
+            } else {
+              this.$router.push("/");
+            }
           });
       } else {
         window.alert("Please specify a playlist name.");

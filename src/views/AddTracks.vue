@@ -26,6 +26,9 @@ export default defineComponent({
     Header,
     SearchBar
   },
+  props: {
+    id: String
+  },
   methods: {
     logSearch(payload: string) {
       console.log(payload);
