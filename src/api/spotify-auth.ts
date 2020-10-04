@@ -46,15 +46,13 @@ export async function getRefreshedAccessToken(
     grant_type: "refresh_token",
     refresh_token: refreshToken
   });
-  const { access_token, refresh_token, expires_in } = await Axios.post(
-    "https://accounts.spotify.com/api/token",
-    query,
-    {
+  const { access_token, refresh_token, expires_in } = (
+    await Axios.post("https://accounts.spotify.com/api/token", query, {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded"
       }
-    }
-  );
+    })
+  ).data;
 
   return {
     accessToken: access_token,
