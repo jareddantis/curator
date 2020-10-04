@@ -3,8 +3,8 @@
     <Header>
       <template v-slot:default>What would you like to do today?</template>
       <template v-slot:subtitle>
-        You have <strong>21 playlists</strong> with a total of
-        <strong>2,942 songs.</strong>
+        You've created <strong>{{ playlistCount }} playlists</strong> with a
+        total of <strong>{{ trackCount }}</strong> tracks.
       </template>
     </Header>
     <div class="tools-body">
@@ -17,7 +17,7 @@
       />
       <Tool icon="la la-trash" name="Delete playlists" route="/create" />
       <Tool icon="la la-random" name="Randomize tracks" route="/create" />
-      <Tool icon="la la-plus" name="Add tracks" route="/add" />
+      <Tool icon="la la-plus" name="Add tracks" route="/add-tracks" />
       <Tool
         icon="la la-filter"
         name="Prune playlists"
@@ -44,12 +44,36 @@
 import { defineComponent } from "vue";
 import Header from "@/components/Header.vue";
 import Tool from "@/components/Tool.vue";
+import useToolsTask from "@/api/composables/ToolsTask";
+import { mapState, useStore } from "vuex";
 
 export default defineComponent({
   name: "Tools",
   components: {
     Header,
     Tool
+  },
+  computed: mapState(["id"]),
+  data() {
+    return {
+      playlistCount: "0",
+      trackCount: "0"
+    };
+  },
+  mounted() {
+    this.store
+      .dispatch("getUpdatedToken")
+      .then(token => this.task.perform(token, this.id))
+      .then(({ playlists, tracks }) => {
+        this.playlistCount = playlists;
+        this.trackCount = tracks;
+      }).then;
+  },
+  setup() {
+    return {
+      store: useStore(),
+      task: useToolsTask()
+    };
   }
 });
 </script>
