@@ -6,29 +6,34 @@
       <RoundButton @click="login">Sign in with Spotify</RoundButton>
     </div>
     <div class="features">
-      <div class="feature">
-        <i class="la la-file"></i>
-        <h2>Make playlists</h2>
-        <p>Add your favorite songs, artists, and albums<br />all in one go</p>
-      </div>
-      <div class="feature">
-        <i class="la la-random"></i>
-        <h2>Randomize tracks</h2>
-        <p>
-          For when it feels like putting it on shuffle<br />isn't random enough
-        </p>
-      </div>
-      <div class="feature">
-        <i class="la la-cloud"></i>
-        <h2>Backup and restore</h2>
-        <p>
-          In case you decide you actually like<br />that one song you deleted
-        </p>
-      </div>
-      <div class="feature">
-        <i class="la la-grin-wink"></i>
-        <h2>And much more</h2>
-        <p>All in one interface that's easy to use,<br />even on your phone</p>
+      <div class="features-content">
+        <div class="feature">
+          <i class="la la-file"></i>
+          <h2>Make playlists</h2>
+          <p>Add your favorite songs, artists, and albums<br />all in one go</p>
+        </div>
+        <div class="feature">
+          <i class="la la-random"></i>
+          <h2>Randomize tracks</h2>
+          <p>
+            For when it feels like putting it on shuffle<br />isn't random
+            enough
+          </p>
+        </div>
+        <div class="feature">
+          <i class="la la-cloud"></i>
+          <h2>Backup and restore</h2>
+          <p>
+            In case you decide you actually like<br />that one song you deleted
+          </p>
+        </div>
+        <div class="feature">
+          <i class="la la-grin-wink"></i>
+          <h2>And much more</h2>
+          <p>
+            All in one interface that's easy to use,<br />even on your phone
+          </p>
+        </div>
       </div>
     </div>
   </div>
@@ -83,7 +88,6 @@ export default defineComponent({
         this.store.commit("setID", userID);
         this.store.commit("setStateToken", "");
         this.store.commit("setVerifier", "");
-        this.store.commit("setLogin", true);
       }
     }
   }
@@ -108,12 +112,19 @@ export default defineComponent({
   }
 }
 .features {
-  background: #f1f1f1;
   padding: 2rem;
-  display: grid;
-  grid-template-rows: auto;
-  grid-column-gap: 2rem;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  background: #f1f1f1;
+
+  .features-content {
+    margin: 0 auto;
+    max-width: 768px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+    grid-row-gap: 2rem;
+    grid-column-gap: 2rem;
+  }
 
   i.la {
     font-size: 2rem;
@@ -122,21 +133,24 @@ export default defineComponent({
 
 @media screen and (max-width: 800px) {
   .hero {
-    height: 100vw;
+    height: unset;
+    padding-bottom: 100%;
   }
   .cta {
     position: relative;
     bottom: unset;
+    top: unset;
     left: unset;
-    width: 100vw;
+    width: 100%;
     background: white;
     padding: 2rem;
+    transform: none;
 
     h1 {
       font-size: 1.75rem;
     }
   }
-  .features {
+  .features .features-content {
     grid-template-columns: 1fr;
     grid-row-gap: 2rem;
   }
