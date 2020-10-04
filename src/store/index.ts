@@ -3,14 +3,22 @@ import VuexPersistence from "vuex-persist";
 import { getRefreshedAccessToken } from "@/api/spotify-auth";
 
 const vuexLocal = new VuexPersistence({
-  key: "Curator",
-  storage: window.localStorage
+  key: "curator",
+  storage: window.localStorage,
+  reducer(state: CuratorState) {
+    return {
+      refreshToken: state.refreshToken,
+      stateToken: state.stateToken,
+      codeVerifier: state.codeVerifier,
+      country: state.country,
+      id: state.id
+    };
+  }
 });
 
 function getInitialState(): CuratorState {
   return {
     // User auth
-    isLoggedIn: false,
     stateToken: "",
     codeVerifier: "",
     accessToken: "",
@@ -29,7 +37,7 @@ export default createStore({
   },
   actions: {
     async getUpdatedToken({ getters, commit }) {
-      if (getters.expired) {
+      if (getters.expired || !getters.access) {
         return await getRefreshedAccessToken(getters.refresh).then(result => {
           const { accessToken, refreshToken, expiry } = result;
           commit("setAccessToken", accessToken);
@@ -41,23 +49,16 @@ export default createStore({
       return new Promise(resolve => {
         resolve(getters.access);
       });
-    },
-    reset({ state }) {
-      const freshState = getInitialState();
-      Object.keys(freshState).forEach(key => {
-        state[key] = freshState[key];
-      });
     }
   },
   getters: {
     access: state => state.accessToken,
     expired: state => new Date().getTime() >= state.expiry - 3 * 60 * 1000,
     id: state => state.id,
+    isLoggedIn: state => !!state.refreshToken,
     refresh: state => state.refreshToken
   },
   mutations: {
-    setLogin: (state: CuratorState, payload: boolean) =>
-      (state.isLoggedIn = payload),
     reset: (state: CuratorState) => {
       const initialState = getInitialState();
       Object.keys(initialState).forEach(key => {

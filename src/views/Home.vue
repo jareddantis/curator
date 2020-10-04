@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <component :is="isLoggedIn ? 'Tools' : 'Intro'" />
+    <component :is="store.getters.isLoggedIn ? 'Tools' : 'Intro'" />
   </div>
 </template>
 
@@ -8,7 +8,7 @@
 import { defineComponent } from "vue";
 import Intro from "@/components/Intro.vue";
 import Tools from "@/components/Tools.vue";
-import { mapState } from "vuex";
+import { useStore } from "vuex";
 
 export default defineComponent({
   name: "Home",
@@ -16,6 +16,10 @@ export default defineComponent({
     Intro,
     Tools
   },
-  computed: mapState(["isLoggedIn"])
+  setup() {
+    return {
+      store: useStore()
+    };
+  }
 });
 </script>

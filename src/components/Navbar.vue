@@ -1,11 +1,11 @@
 <template>
   <nav
     role="navigation"
-    :sticky="isLoggedIn"
+    :sticky="store.getters.isLoggedIn"
     :transparent="isTransparent"
     v-show="$route.name !== 'Callback'"
   >
-    <ul class="nav-content" :narrow="isLoggedIn">
+    <ul class="nav-content" :narrow="store.getters.isLoggedIn">
       <li
         class="nav-left"
         v-show="$route.name !== 'Home'"
@@ -15,12 +15,12 @@
       </li>
       <li class="nav-brand" @click="scrollToTop">
         <img src="@/img/logo.svg" alt="Curator" />
-        <h3 v-show="!isLoggedIn">Curator</h3>
+        <h3 v-show="!store.getters.isLoggedIn">Curator</h3>
       </li>
-      <li class="nav-right">
+      <li class="nav-right" v-show="store.getters.isLoggedIn">
         <i class="la la-angle-down"></i>
         <ul class="dropdown">
-          <li @click="store.dispatch('reset')">
+          <li @click="store.commit('reset')">
             <span class="title">Sign out</span>
             <span class="subtitle">
               Signed in as <strong>{{ id }}</strong>
@@ -43,7 +43,7 @@ export default defineComponent({
   },
   computed: {
     isTransparent(): boolean {
-      return this.isLoggedIn ? false : this.y < 32;
+      return !this.store.getters.isLoggedIn && this.y < 32;
     },
     ...mapState(["isLoggedIn", "id"])
   },

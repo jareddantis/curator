@@ -2,7 +2,7 @@
   <Navbar />
   <div
     class="app-view"
-    :with-margin="isLoggedIn"
+    :with-margin="store.getters.isLoggedIn"
     v-if="$route.name !== 'Callback'"
   >
     <router-view v-slot="{ Component }">
@@ -23,7 +23,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { mapState, useStore } from "vuex";
+import { useStore } from "vuex";
 import Navbar from "@/components/Navbar.vue";
 import Footer from "@/components/Footer.vue";
 
@@ -33,7 +33,6 @@ export default defineComponent({
     Navbar,
     Footer
   },
-  computed: mapState(["isLoggedIn", "accessToken", "refreshToken"]),
   data() {
     return {
       prevHeight: "0",

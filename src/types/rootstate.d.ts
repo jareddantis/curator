@@ -5,7 +5,6 @@ interface CuratorState {
   country: string;
   expiry: number;
   id: string;
-  isLoggedIn: boolean;
   refreshToken: string;
   stateToken: string;
 }
