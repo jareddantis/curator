@@ -51,30 +51,14 @@ export default defineComponent({
               }
             )
           ).data;
-          // Get user info
-          const { country, id } = (
-            await Axios.get("https://api.spotify.com/v1/me", {
-              headers: {
-                Authorization: `Bearer ${access_token}`
-              }
-            })
-          ).data;
 
-          if (
-            !!access_token &&
-            !!refresh_token &&
-            !!expires_in &&
-            !!country &&
-            !!id
-          ) {
+          if (!!access_token && !!refresh_token && !!expires_in) {
             if (window.opener) {
               window.opener.postMessage({
                 type: "curator",
                 accessToken: access_token,
                 expiry: parseInt(expires_in, 10) * 1000 + new Date().getTime(),
-                refreshToken: refresh_token,
-                userCountry: country,
-                userID: id
+                refreshToken: refresh_token
               });
               window.close();
             } else {

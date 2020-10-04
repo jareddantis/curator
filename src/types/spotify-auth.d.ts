@@ -3,3 +3,8 @@ interface RefreshedTokenResponse {
   refreshToken: string;
   expiry: number;
 }
+
+interface UserInfoResponse {
+  country: string;
+  id: string;
+}

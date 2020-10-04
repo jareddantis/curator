@@ -60,3 +60,19 @@ export async function getRefreshedAccessToken(
     expiry: parseInt(expires_in, 10) * 1000 + new Date().getTime()
   };
 }
+
+export async function getUserInfo(
+  accessToken: string
+): Promise<UserInfoResponse> {
+  const { country, id } = (
+    await Axios.get("https://api.spotify.com/v1/me", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    })
+  ).data;
+  return {
+    country,
+    id
+  };
+}

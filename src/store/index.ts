@@ -1,6 +1,6 @@
 import { createStore } from "vuex";
 import VuexPersistence from "vuex-persist";
-import { getRefreshedAccessToken } from "@/api/spotify-auth";
+import { getRefreshedAccessToken, getUserInfo } from "@/api/spotify-auth";
 
 const vuexLocal = new VuexPersistence({
   key: "curator",
@@ -9,9 +9,7 @@ const vuexLocal = new VuexPersistence({
     return {
       refreshToken: state.refreshToken,
       stateToken: state.stateToken,
-      codeVerifier: state.codeVerifier,
-      country: state.country,
-      id: state.id
+      codeVerifier: state.codeVerifier
     };
   }
 });
@@ -37,22 +35,33 @@ export default createStore({
   },
   actions: {
     async getUpdatedToken({ getters, commit }) {
+      let accessToken = getters.access;
+
       if (getters.expired || !getters.access) {
-        return await getRefreshedAccessToken(getters.refresh).then(result => {
-          const { accessToken, refreshToken, expiry } = result;
-          commit("setAccessToken", accessToken);
-          commit("setExpiry", expiry);
-          commit("setRefreshToken", refreshToken);
-          return accessToken;
-        });
+        accessToken = await getRefreshedAccessToken(getters.refresh).then(
+          ({ accessToken, refreshToken, expiry }) => {
+            commit("setAccessToken", accessToken);
+            commit("setExpiry", expiry);
+            commit("setRefreshToken", refreshToken);
+            return accessToken;
+          }
+        );
       }
+
+      if (!getters.id || !getters.country) {
+        const { country, id } = await getUserInfo(accessToken);
+        commit("setCountry", country);
+        commit("setID", id);
+      }
+
       return new Promise(resolve => {
-        resolve(getters.access);
+        resolve(accessToken);
       });
     }
   },
   getters: {
     access: state => state.accessToken,
+    country: state => state.country,
     expired: state => new Date().getTime() >= state.expiry - 3 * 60 * 1000,
     id: state => state.id,
     isLoggedIn: state => !!state.refreshToken,
