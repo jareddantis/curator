@@ -91,4 +91,10 @@ export default defineComponent({
     grid-template-columns: 1fr 1fr;
   }
 }
+
+@media screen and (max-width: 480px) {
+  .tools-body {
+    grid-template-columns: 1fr;
+  }
+}
 </style>
