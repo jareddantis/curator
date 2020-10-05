@@ -107,8 +107,9 @@ td,
 span,
 label {
   font-family: "Inter", -apple-system, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
+  -webkit-font-smoothing: subpixel-antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 button {
   outline: none;

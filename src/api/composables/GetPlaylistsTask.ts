@@ -20,7 +20,7 @@ const unpaginate = async (currentOffset: number, userID: string) => {
   return allItems;
 };
 
-export default function useToolsTask() {
+export default function getPlaylistsTask() {
   return useTask(function*(signal, token, userID) {
     spotify.setAccessToken(token);
     const items = yield unpaginate(0, userID);
@@ -28,8 +28,9 @@ export default function useToolsTask() {
       .map((item: SimplifiedPlaylist) => item.tracks.total)
       .reduce((a: number, b: number) => a + b);
     return {
-      playlists: withCommas(items.length),
-      tracks: withCommas(tracks)
+      playlists: items,
+      numPlaylists: withCommas(items.length),
+      totalTracks: withCommas(tracks)
     };
-  });
+  }).restartable();
 }

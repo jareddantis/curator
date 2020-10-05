@@ -12,7 +12,8 @@ export default defineComponent({
   props: {
     fullWidth: Boolean,
     small: Boolean,
-    disabled: Boolean
+    disabled: Boolean,
+    transparent: Boolean
   }
 });
 </script>
@@ -42,6 +43,14 @@ button {
   &[small="true"] {
     padding: 0.5rem 1rem;
     font-size: 1rem;
+  }
+  &[disabled] {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+  &[transparent="true"] {
+    background: none;
+    color: black;
   }
 }
 </style>

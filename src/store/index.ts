@@ -7,6 +7,8 @@ const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
   reducer(state: CuratorState) {
     return {
+      accessToken: state.accessToken,
+      expiry: state.expiry,
       refreshToken: state.refreshToken,
       stateToken: state.stateToken,
       codeVerifier: state.codeVerifier

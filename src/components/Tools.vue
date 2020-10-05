@@ -13,30 +13,56 @@
         icon="la la-pencil-alt"
         name="Edit playlist details"
         description="Name, description, artwork"
-        route="/create"
+        @click="pickPlaylist('edit details')"
       />
-      <Tool icon="la la-trash" name="Delete playlists" route="/create" />
-      <Tool icon="la la-random" name="Randomize tracks" route="/create" />
-      <Tool icon="la la-plus" name="Add tracks" route="/add-tracks" />
+      <Tool
+        icon="la la-trash"
+        name="Delete playlists"
+        @click="pickPlaylist('delete', true)"
+      />
+      <Tool
+        icon="la la-random"
+        name="Randomize tracks"
+        @click="pickPlaylist('randomize')"
+      />
+      <Tool
+        icon="la la-plus"
+        name="Add tracks"
+        route="/add-tracks"
+        @click="pickPlaylist('add tracks to')"
+      />
       <Tool
         icon="la la-filter"
         name="Prune playlists"
         description="Remove artists & albums"
         route="/create"
+        @click="pickPlaylist('remove tracks from', true)"
       />
-      <Tool icon="la la-arrows-alt" name="Move tracks" route="/create" />
-      <Tool icon="la la-search" name="Search in playlists" route="/create" />
+      <Tool
+        icon="la la-arrows-alt"
+        name="Move tracks"
+        route="/create"
+        @click="pickPlaylist('move tracks from')"
+      />
+      <Tool icon="la la-search" name="Search in playlists" route="/search" />
       <Tool
         icon="la la-cloud-download-alt"
         name="Backup playlists"
         route="/create"
+        @click="pickPlaylist('backup')"
       />
       <Tool
         icon="la la-cloud-upload-alt"
         name="Restore backup"
-        route="/create"
+        route="/restore"
       />
     </div>
+    <PlaylistPicker
+      :action="pickPurpose"
+      :visible="willPickPlaylist"
+      :plural="willPickMultiple"
+      @dismiss="willPickPlaylist = false"
+    ></PlaylistPicker>
   </div>
 </template>
 
@@ -44,35 +70,47 @@
 import { defineComponent } from "vue";
 import Header from "@/components/Header.vue";
 import Tool from "@/components/Tool.vue";
-import useToolsTask from "@/api/composables/ToolsTask";
+import PlaylistPicker from "@/components/PlaylistPicker.vue";
+import getPlaylistsTask from "@/api/composables/GetPlaylistsTask";
 import { mapState, useStore } from "vuex";
 
 export default defineComponent({
   name: "Tools",
   components: {
     Header,
-    Tool
+    Tool,
+    PlaylistPicker
   },
   computed: mapState(["id"]),
   data() {
     return {
+      pickPurpose: "",
       playlistCount: "0",
-      trackCount: "0"
+      trackCount: "0",
+      willPickPlaylist: false,
+      willPickMultiple: false
     };
+  },
+  methods: {
+    pickPlaylist(action: string, plural = false) {
+      this.pickPurpose = action;
+      this.willPickMultiple = plural;
+      this.willPickPlaylist = true;
+    }
   },
   mounted() {
     this.store
       .dispatch("getUpdatedToken")
       .then(token => this.task.perform(token, this.id))
-      .then(({ playlists, tracks }) => {
-        this.playlistCount = playlists;
-        this.trackCount = tracks;
+      .then(({ numPlaylists, totalTracks }) => {
+        this.playlistCount = numPlaylists;
+        this.trackCount = totalTracks;
       }).then;
   },
   setup() {
     return {
       store: useStore(),
-      task: useToolsTask()
+      task: getPlaylistsTask()
     };
   }
 });

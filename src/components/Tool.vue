@@ -22,12 +22,14 @@ export default defineComponent({
     name: String,
     route: {
       type: String,
-      required: true
+      default: "none"
     }
   },
   methods: {
     navigate() {
-      this.$router.push(this.route);
+      if (this.route !== "none") {
+        this.$router.push(this.route);
+      }
     }
   }
 });
