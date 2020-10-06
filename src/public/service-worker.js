@@ -47,6 +47,12 @@ const newCfStrategy = function(cacheName) {
   });
 };
 
+// Cache album art from Spotify
+workbox.routing.registerRoute(
+  /^https:\/\/i\.scdn\.co\/image/,
+  newCfStrategy("spotify-art")
+);
+
 // Cache icon font from Icons8
 workbox.routing.registerRoute(
   /^https:\/\/maxst\.icons8\.com/,
