@@ -106,23 +106,25 @@ export default defineComponent({
   },
   methods: {
     doSearch(query: string) {
-      this.results.ready = false;
-      this.store
-        .dispatch("getUpdatedToken")
-        .then(token => this.searchTask.perform(token, query))
-        .then(({ albums, tracks }) => {
-          this.results.albums = albums;
-          this.results.tracks = tracks;
-          this.results.ready = true;
-        })
-        .catch(e => {
-          if (e !== "cancel") {
-            this.results.ready = false;
-            window.alert(
-              `Error while searching: ${e}. Please file a bug report.`
-            );
-          }
-        });
+      if (query.length) {
+        this.results.ready = false;
+        this.store
+          .dispatch("getUpdatedToken")
+          .then(token => this.searchTask.perform(token, query))
+          .then(({ albums, tracks }) => {
+            this.results.albums = albums;
+            this.results.tracks = tracks;
+            this.results.ready = true;
+          })
+          .catch(e => {
+            if (e !== "cancel") {
+              this.results.ready = false;
+              window.alert(
+                `Error while searching: ${e}. Please file a bug report.`
+              );
+            }
+          });
+      }
     },
     formatDuration(inMs: number) {
       const secs = Math.ceil(inMs / 1000);
