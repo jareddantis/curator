@@ -7,4 +7,5 @@ interface CuratorState {
   id: string;
   refreshToken: string;
   stateToken: string;
+  target: string[];
 }

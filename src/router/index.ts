@@ -27,11 +27,10 @@ const routes: Array<RouteRecordRaw> = [
       )
   },
   {
-    path: "/add-tracks/:id",
+    path: "/add-tracks",
     name: "Add tracks",
     component: () =>
-      import(/* webpackChunkName: "AddTracks" */ "../views/AddTracks.vue"),
-    props: true
+      import(/* webpackChunkName: "AddTracks" */ "../views/AddTracks.vue")
   }
 ];
 

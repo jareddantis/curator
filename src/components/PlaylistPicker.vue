@@ -81,7 +81,7 @@
 import { defineComponent } from "vue";
 import BottomSheet from "@/components/BottomSheet.vue";
 import RoundButton from "@/components/RoundButton.vue";
-import getPlaylistsTask from "@/api/composables/GetPlaylistsTask";
+import getPlaylists from "@/api/composables/GetPlaylists";
 import { mapState, useStore } from "vuex";
 import { SimplifiedPlaylist } from "spotify-web-api-ts/types/types/SpotifyObjects";
 
@@ -99,10 +99,11 @@ export default defineComponent({
     };
   },
   methods: {
-    close(result: string | string[]) {
+    close(result: string[]) {
       const rootSheet = this.$refs.root as typeof BottomSheet;
       rootSheet.close();
-      this.$emit("playlist-picked", result);
+      this.store.commit("setTarget", result);
+      this.$emit("playlist-picked");
     },
     deselectAll() {
       this.selectedPlaylists = [];
@@ -116,7 +117,7 @@ export default defineComponent({
           this.selectedPlaylists.push(id);
         }
       } else {
-        this.close(id);
+        this.close([id]);
       }
     },
     selectAll() {
@@ -145,7 +146,7 @@ export default defineComponent({
   setup() {
     return {
       store: useStore(),
-      task: getPlaylistsTask()
+      task: getPlaylists()
     };
   },
   watch: {

@@ -27,7 +27,10 @@ function getInitialState(): CuratorState {
 
     // User info
     country: "",
-    id: ""
+    id: "",
+
+    // Edit target
+    target: []
   };
 }
 
@@ -87,6 +90,8 @@ export default createStore({
       (state.refreshToken = payload),
     setStateToken: (state: CuratorState, payload: string) =>
       (state.stateToken = payload),
+    setTarget: (state: CuratorState, payload: string[]) =>
+      (state.target = payload),
     setVerifier: (state: CuratorState, payload: string) =>
       (state.codeVerifier = payload)
   },

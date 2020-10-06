@@ -20,7 +20,7 @@ const unpaginate = async (currentOffset: number, userID: string) => {
   return allItems;
 };
 
-export default function getPlaylistsTask() {
+export default function getPlaylists() {
   return useTask(function*(signal, token, userID) {
     spotify.setAccessToken(token);
     const items = yield unpaginate(0, userID);

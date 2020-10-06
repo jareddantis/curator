@@ -1,7 +1,7 @@
 <template>
   <div class="styled-input">
     <label :for="id">{{ label }}</label>
-    <input type="search" :id="id" @keydown.enter="submitSearch" />
+    <input type="search" :id="id" @input="submitSearch" ref="input" />
   </div>
 </template>
 
@@ -23,18 +23,11 @@ export default defineComponent({
     };
   },
   methods: {
+    focus() {
+      (this.$refs.input as HTMLInputElement).focus();
+    },
     submitSearch(e: HTMLInputEvent) {
       e.preventDefault();
-
-      // Rate limit: once every second
-      if (this.lastSearch !== 0) {
-        const now = new Date().getTime();
-        if (now - this.lastSearch < 1000) {
-          return;
-        }
-        this.lastSearch = now;
-      }
-
       this.$emit("search", e.target.value);
     }
   }

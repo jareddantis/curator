@@ -13,43 +13,39 @@
         icon="la la-pencil-alt"
         name="Edit playlist details"
         description="Name, description, artwork"
-        @click="pickPlaylist('edit details')"
+        @click="pickPlaylist('edit', 'edit details')"
       />
       <Tool
         icon="la la-trash"
         name="Delete playlists"
-        @click="pickPlaylist('delete', true)"
+        @click="pickPlaylist('delete-playlists', 'delete', true)"
       />
       <Tool
         icon="la la-random"
         name="Randomize tracks"
-        @click="pickPlaylist('randomize')"
+        @click="pickPlaylist('randomize', 'randomize')"
       />
       <Tool
         icon="la la-plus"
         name="Add tracks"
-        route="/add-tracks"
-        @click="pickPlaylist('add tracks to')"
+        @click="pickPlaylist('add-tracks', 'add tracks to')"
       />
       <Tool
         icon="la la-filter"
         name="Prune playlists"
         description="Remove artists & albums"
-        route="/create"
-        @click="pickPlaylist('remove tracks from', true)"
+        @click="pickPlaylist('prune', 'remove tracks from', true)"
       />
       <Tool
         icon="la la-arrows-alt"
         name="Move tracks"
-        route="/create"
-        @click="pickPlaylist('move tracks from')"
+        @click="pickPlaylist('move-tracks', 'move tracks from')"
       />
       <Tool icon="la la-search" name="Search in playlists" route="/search" />
       <Tool
         icon="la la-cloud-download-alt"
         name="Backup playlists"
-        route="/create"
-        @click="pickPlaylist('backup')"
+        @click="pickPlaylist('backup', 'backup')"
       />
       <Tool
         icon="la la-cloud-upload-alt"
@@ -62,6 +58,7 @@
       :visible="willPickPlaylist"
       :plural="willPickMultiple"
       @dismiss="willPickPlaylist = false"
+      @playlist-picked="$router.push(`/${nextRoute}`)"
     ></PlaylistPicker>
   </div>
 </template>
@@ -71,7 +68,7 @@ import { defineComponent } from "vue";
 import Header from "@/components/Header.vue";
 import Tool from "@/components/Tool.vue";
 import PlaylistPicker from "@/components/PlaylistPicker.vue";
-import getPlaylistsTask from "@/api/composables/GetPlaylistsTask";
+import getPlaylists from "@/api/composables/GetPlaylists";
 import { mapState, useStore } from "vuex";
 
 export default defineComponent({
@@ -84,6 +81,7 @@ export default defineComponent({
   computed: mapState(["id"]),
   data() {
     return {
+      nextRoute: "",
       pickPurpose: "",
       playlistCount: "0",
       trackCount: "0",
@@ -92,7 +90,8 @@ export default defineComponent({
     };
   },
   methods: {
-    pickPlaylist(action: string, plural = false) {
+    pickPlaylist(route: string, action: string, plural = false) {
+      this.nextRoute = route;
       this.pickPurpose = action;
       this.willPickMultiple = plural;
       this.willPickPlaylist = true;
@@ -110,7 +109,7 @@ export default defineComponent({
   setup() {
     return {
       store: useStore(),
-      task: getPlaylistsTask()
+      task: getPlaylists()
     };
   }
 });
