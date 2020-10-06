@@ -11,30 +11,18 @@
     </template>
     <template v-slot:content>
       <div class="playlists">
-        <div
-          class="playlist"
+        <MediaEntity
           v-for="playlist in playlists"
           :key="playlist.id"
+          :name="playlist.name"
           :selected="selectedPlaylists.includes(playlist.id)"
+          :image="playlist.images[0]?.url"
           @click="playlistClickHandler(playlist.id)"
         >
-          <div class="playlist-art">
-            <div class="selected">
-              <i class="la la-check"></i>
-            </div>
-            <img :src="playlist.images[0].url" :alt="playlist.name" />
-          </div>
-          <div class="playlist-info">
-            <div class="playlist-info-content">
-              <h3>{{ playlist.name }}</h3>
-              <p>
-                {{ playlist.tracks.total }} track{{
-                  playlist.tracks.total !== 1 ? "s" : ""
-                }}
-              </p>
-            </div>
-          </div>
-        </div>
+          {{ playlist.tracks.total }} track{{
+            playlist.tracks.total !== 1 ? "s" : ""
+          }}
+        </MediaEntity>
       </div>
     </template>
     <template v-slot:bottom>
@@ -84,10 +72,12 @@ import RoundButton from "@/components/RoundButton.vue";
 import getPlaylists from "@/api/composables/GetPlaylists";
 import { mapState, useStore } from "vuex";
 import { SimplifiedPlaylist } from "spotify-web-api-ts/types/types/SpotifyObjects";
+import MediaEntity from "@/components/MediaEntity.vue";
 
 export default defineComponent({
   name: "PlaylistPicker",
   components: {
+    MediaEntity,
     BottomSheet,
     RoundButton
   },
@@ -164,79 +154,6 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.playlist {
-  position: relative;
-  width: 100%;
-  display: grid;
-  grid-template-columns: 3rem 1fr;
-  grid-template-rows: 3rem;
-  grid-column-gap: 1rem;
-  margin-bottom: 2rem;
-  transition: transform 150ms cubic-bezier(0.22, 1, 0.36, 1);
-  cursor: pointer;
-
-  &:active {
-    transform: scale(0.98);
-  }
-  &:not(:last-child):after {
-    content: " ";
-    display: block;
-    position: absolute;
-    bottom: -1rem;
-    left: 0;
-    width: 100%;
-    height: 1px;
-    background: rgba(0, 0, 0, 0.1);
-  }
-  & > div {
-    width: 100%;
-    height: 100%;
-  }
-  &[selected="true"] {
-    .playlist-art .selected {
-      display: flex;
-    }
-    .playlist-info-content {
-      color: #bf0000;
-    }
-  }
-  .playlist-art {
-    position: relative;
-
-    .selected {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.5rem;
-    }
-    img {
-      width: 100%;
-    }
-  }
-  .playlist-info {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-
-    .playlist-info-content {
-      h3 {
-        margin: 0;
-      }
-      p {
-        font-size: 0.85rem;
-        margin: 0.25rem 0 0;
-      }
-    }
-  }
-}
-
 .proceed {
   p {
     margin-top: 0;
