@@ -74,7 +74,7 @@ export default defineComponent({
 .bottom-sheet {
   max-width: 768px;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   background: white;
   position: relative;
   overflow-y: scroll;
