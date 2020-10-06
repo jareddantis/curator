@@ -104,7 +104,7 @@ export default defineComponent({
       font-size: 1.25rem;
     }
     .tool-text {
-      font-size: 0.9rem;
+      font-size: 0.875rem;
     }
   }
 }

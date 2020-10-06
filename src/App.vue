@@ -80,6 +80,9 @@ export default defineComponent({
 
 <style lang="scss">
 // Sane defaults
+:root {
+  font-size: 16px;
+}
 * {
   box-sizing: border-box;
 }
@@ -107,9 +110,27 @@ td,
 span,
 label {
   font-family: "Inter", -apple-system, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: subpixel-antialiased;
+  -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 700;
+}
+p,
+li,
+a,
+button,
+input,
+td,
+span,
+label {
+  font-weight: 450;
 }
 button {
   outline: none;
