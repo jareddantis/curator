@@ -31,6 +31,6 @@ hr {
   background: rgba(0, 0, 0, 0.2);
   border: none;
   height: 1px;
-  margin: 3rem 0;
+  margin: 2rem 0;
 }
 </style>

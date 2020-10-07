@@ -1,6 +1,6 @@
 <template>
   <div class="view-body">
-    <Header border>
+    <Header :border="results.ready">
       <template v-slot:default
         >Add tracks for &quot;{{ playlistName }}&quot;</template
       >
@@ -10,42 +10,45 @@
       </template>
     </Header>
     <div class="search-results" v-show="results.ready">
-      <div class="result-header">
-        <div class="track-results">
-          <h4>Top ten matching tracks</h4>
-          <MediaEntity
-            v-for="track in results.tracks"
-            :key="track.id"
-            :name="track.name"
-            :image="track.album.images[0]?.url"
-            :tag="track.explicit ? 'explicit' : ''"
-            small
-          >
-            <strong>{{ formatDuration(track.duration_ms) }}</strong> &bull;
-            {{ track.artists[0].name }} &bull; {{ track.album.name }} ({{
-              track.album.release_date.split("-")[0]
-            }})
-          </MediaEntity>
-        </div>
-        <div class="album-results">
-          <h4>Top ten matching albums</h4>
-          <MediaEntity
-            v-for="album in results.albums"
-            :key="album.id"
-            :name="album.name"
-            :image="album.images[0]?.url"
-            :tag="album.album_type"
-            small
-          >
-            {{ album.artists[0].name }} &bull;
-            {{ album.release_date.split("-")[0] }}
-            <span v-show="album.album_type !== 'single'">
-              &bull; {{ album.total_tracks }} track{{
-                album.total_tracks !== 1 ? "s" : ""
-              }}
-            </span>
-          </MediaEntity>
-        </div>
+      <p class="jump" @click="jumpToAlbums">
+        Jump to albums <i class="la la-arrow-down"></i>
+      </p>
+      <div class="track-results">
+        <h4>Top matching tracks (hover or hold to preview)</h4>
+        <MediaEntity
+          small
+          v-for="track in results.tracks"
+          :key="track.id"
+          :name="track.name"
+          :image="track.album.images[0]?.url"
+          :explicit="track.explicit"
+          :preview-url="track.preview_url"
+          previewable
+        >
+          <strong>{{ formatDuration(track.duration_ms) }}</strong> &bull;
+          {{ track.artists[0].name }} &bull; {{ track.album.name }} ({{
+            track.album.release_date.split("-")[0]
+          }})
+        </MediaEntity>
+      </div>
+      <div class="album-results" ref="albums">
+        <h4>Top matching albums</h4>
+        <MediaEntity
+          v-for="album in results.albums"
+          :key="album.id"
+          :name="album.name"
+          :image="album.images[0]?.url"
+          :tag="album.album_type"
+          small
+        >
+          {{ album.artists[0].name }} &bull;
+          {{ album.release_date.split("-")[0] }}
+          <span v-show="album.album_type !== 'single'">
+            &bull; {{ album.total_tracks }} track{{
+              album.total_tracks !== 1 ? "s" : ""
+            }}
+          </span>
+        </MediaEntity>
       </div>
     </div>
   </div>
@@ -133,6 +136,11 @@ export default defineComponent({
         secRemainder = `0${secRemainder}`;
       }
       return `${Math.floor(secs / 60)}:${secRemainder}`;
+    },
+    jumpToAlbums() {
+      const albumResults = this.$refs.albums as HTMLDivElement;
+      const offset = albumResults.offsetTop - window.innerHeight / 3;
+      window.scrollTo({ left: 0, top: offset, behavior: "smooth" });
     }
   },
   setup() {
@@ -148,12 +156,18 @@ export default defineComponent({
 <style scoped lang="scss">
 .search-results {
   .album-results {
-    margin-top: 4rem;
+    margin-top: 3rem;
   }
   h4 {
     margin-top: 0;
     font-weight: 500;
-    color: #888;
+    color: #555;
+    font-size: 0.875rem;
+  }
+  .jump {
+    text-align: right;
+    font-weight: 700;
+    cursor: pointer;
   }
 }
 </style>
