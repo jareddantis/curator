@@ -3,14 +3,14 @@
     class="media-entity"
     :selected="selected"
     :small="small"
-    @mouseenter.passive="mouseDown"
-    @mouseleave.passive="mouseUp"
+    @mouseenter="mouseDown"
+    @mouseleave="mouseUp"
     @touchstart="mouseDown"
     @touchend="mouseUp"
     @contextmenu="rightClickHandler"
   >
     <div class="preview-tooltip" :visible="showTooltip">
-      <p>{{ previewable ? "Previewing" : "No preview available" }}</p>
+      <p>{{ previewUrl ? "Previewing" : "No preview available" }}</p>
     </div>
     <div class="progress" ref="progress"></div>
     <div class="art">
