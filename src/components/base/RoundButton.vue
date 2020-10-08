@@ -1,5 +1,10 @@
 <template>
-  <button :full-width="fullWidth" :small="small" :disabled="disabled">
+  <button
+    :full-width="fullWidth"
+    :small="small"
+    :disabled="disabled"
+    :transparent="transparent"
+  >
     <slot></slot>
   </button>
 </template>
@@ -27,7 +32,6 @@ button {
   font-weight: bold;
   padding: 1rem 1.5rem;
   border-radius: 100px;
-  transition: all 150ms cubic-bezier(0.22, 1, 0.36, 1);
 
   &:hover {
     background: #232323;
@@ -50,7 +54,15 @@ button {
   }
   &[transparent="true"] {
     background: none;
+    border: 1px solid black;
     color: black;
+
+    &:hover {
+      background: #eee;
+    }
+    &:active {
+      background: #ddd;
+    }
   }
 }
 </style>
