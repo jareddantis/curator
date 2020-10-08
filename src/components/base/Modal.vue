@@ -30,7 +30,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import LoadingIcon from "@/components/LoadingIcon.vue";
+import LoadingIcon from "@/components/standalone/LoadingIcon.vue";
 
 export default defineComponent({
   name: "Modal",
@@ -72,7 +72,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@import "../styles/Dialog";
+@import "../../styles/Dialog";
 
 .modal {
   max-width: 400px;

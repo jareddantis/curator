@@ -67,12 +67,12 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import BottomSheet from "@/components/BottomSheet.vue";
-import RoundButton from "@/components/RoundButton.vue";
+import BottomSheet from "@/components/base/BottomSheet.vue";
+import RoundButton from "@/components/base/RoundButton.vue";
 import getPlaylists from "@/api/composables/GetPlaylists";
 import { mapState, useStore } from "vuex";
 import { SimplifiedPlaylist } from "spotify-web-api-ts/types/types/SpotifyObjects";
-import MediaEntity from "@/components/MediaEntity.vue";
+import MediaEntity from "@/components/standalone/MediaEntity.vue";
 
 export default defineComponent({
   name: "PlaylistPicker",

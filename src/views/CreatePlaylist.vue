@@ -126,9 +126,9 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { mapState, useStore } from "vuex";
-import Header from "@/components/Header.vue";
-import RoundButton from "@/components/RoundButton.vue";
-import Modal from "@/components/Modal.vue";
+import Header from "@/components/standalone/Header.vue";
+import RoundButton from "@/components/base/RoundButton.vue";
+import Modal from "@/components/base/Modal.vue";
 import useCreatePlaylistTask from "@/api/composables/CreatePlaylist";
 
 export default defineComponent({

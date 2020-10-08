@@ -31,7 +31,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import LoadingIcon from "@/components/LoadingIcon.vue";
+import LoadingIcon from "@/components/standalone/LoadingIcon.vue";
 
 export default defineComponent({
   name: "BottomSheet",
@@ -69,7 +69,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@import "../styles/Dialog";
+@import "../../styles/Dialog";
 
 .bottom-sheet {
   max-width: 768px;

@@ -24,8 +24,8 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { useStore } from "vuex";
-import Navbar from "@/components/Navbar.vue";
-import Footer from "@/components/Footer.vue";
+import Navbar from "@/components/standalone/Navbar.vue";
+import Footer from "@/components/standalone/Footer.vue";
 
 export default defineComponent({
   name: "App",

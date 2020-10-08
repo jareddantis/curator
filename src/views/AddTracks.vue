@@ -56,16 +56,16 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import Header from "@/components/Header.vue";
-import SearchBar from "@/components/SearchBar.vue";
-import search from "@/api/composables/Search";
 import { mapState, useStore } from "vuex";
+import Header from "@/components/standalone/Header.vue";
+import SearchBar from "@/components/standalone/SearchBar.vue";
+import MediaEntity from "@/components/standalone/MediaEntity.vue";
+import search from "@/api/composables/Search";
 import getPlaylist from "@/api/composables/GetPlaylist";
 import {
   SimplifiedAlbum,
   SimplifiedTrack
 } from "spotify-web-api-ts/types/types/SpotifyObjects";
-import MediaEntity from "@/components/MediaEntity.vue";
 
 export default defineComponent({
   name: "AddTracks",

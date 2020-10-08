@@ -65,11 +65,11 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import Header from "@/components/Header.vue";
-import Tool from "@/components/Tool.vue";
-import PlaylistPicker from "@/components/PlaylistPicker.vue";
-import getPlaylists from "@/api/composables/GetPlaylists";
 import { mapState, useStore } from "vuex";
+import Header from "@/components/standalone/Header.vue";
+import Tool from "@/components/standalone/Tool.vue";
+import PlaylistPicker from "@/components/impl/PlaylistPicker.vue";
+import getPlaylists from "@/api/composables/GetPlaylists";
 
 export default defineComponent({
   name: "Tools",

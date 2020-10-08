@@ -42,7 +42,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { useStore } from "vuex";
-import RoundButton from "@/components/RoundButton.vue";
+import RoundButton from "@/components/base/RoundButton.vue";
 import { generatePKCE } from "@/api/spotify-auth";
 
 export default defineComponent({
@@ -90,7 +90,7 @@ export default defineComponent({
 .hero {
   width: 100%;
   height: 100vh;
-  background: url("../img/intro.svg") no-repeat right top;
+  background: url("../../img/intro.svg") no-repeat right top;
 }
 .cta {
   position: absolute;
