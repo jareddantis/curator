@@ -21,7 +21,8 @@
             <slot name="content"></slot>
           </div>
           <div class="bottom-sheet-action" v-show="!noActions">
-            <slot name="bottom"></slot>
+            <p class="actions-caption"><slot name="actions-caption"></slot></p>
+            <div class="actions"><slot name="actions"></slot></div>
           </div>
         </div>
       </transition>
@@ -43,6 +44,7 @@ export default defineComponent({
       showSheet: false
     };
   },
+  emits: ["dismiss"],
   props: {
     loading: {
       default: false,
@@ -134,6 +136,16 @@ export default defineComponent({
     z-index: 5;
     background: white;
     border-top: 1px solid rgba(0, 0, 0, 0.1);
+
+    .actions-caption {
+      margin-top: 0;
+    }
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: 1fr;
+      grid-column-gap: 1rem;
+    }
   }
 }
 </style>

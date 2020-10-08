@@ -10,57 +10,51 @@
       Pick one {{ plural ? "or more playlists" : "playlist" }} to {{ action }}.
     </template>
     <template v-slot:content>
-      <div class="playlists">
-        <MediaEntity
-          v-for="playlist in playlists"
-          :key="playlist.id"
-          :name="playlist.name"
-          :selected="selectedPlaylists.includes(playlist.id)"
-          :image="playlist.images[0]?.url"
-          @click="playlistClickHandler(playlist.id)"
-        >
-          {{ playlist.tracks.total }} track{{
-            playlist.tracks.total !== 1 ? "s" : ""
-          }}
-        </MediaEntity>
-      </div>
+      <MediaEntity
+        v-for="playlist in playlists"
+        :key="playlist.id"
+        :name="playlist.name"
+        :selected="selectedPlaylists.includes(playlist.id)"
+        :image="playlist.images[0]?.url"
+        @click="playlistClickHandler(playlist.id)"
+      >
+        {{ playlist.tracks.total }} track{{
+          playlist.tracks.total !== 1 ? "s" : ""
+        }}
+      </MediaEntity>
     </template>
-    <template v-slot:bottom>
-      <div class="proceed">
-        <p>
-          {{ selectedPlaylists.length }} playlist{{
-            selectedPlaylists.length !== 1 ? "s" : ""
-          }}
-          selected
-        </p>
-        <div class="actions">
-          <RoundButton
-            full-width
-            transparent
-            @click="selectAll"
-            :disabled="
-              selectedPlaylists.length === playlists.length || task.isRunning
-            "
-          >
-            Select All
-          </RoundButton>
-          <RoundButton
-            full-width
-            transparent
-            @click="deselectAll"
-            :disabled="!selectedPlaylists.length || task.isRunning"
-          >
-            Deselect All
-          </RoundButton>
-          <RoundButton
-            full-width
-            @click="submitMultiple"
-            :disabled="!selectedPlaylists.length || task.isRunning"
-          >
-            Proceed
-          </RoundButton>
-        </div>
-      </div>
+    <template v-slot:actions-caption>
+      {{ selectedPlaylists.length }} playlist{{
+        selectedPlaylists.length !== 1 ? "s" : ""
+      }}
+      selected
+    </template>
+    <template v-slot:actions>
+      <RoundButton
+        full-width
+        transparent
+        @click="selectAll"
+        :disabled="
+          selectedPlaylists.length === playlists.length || task.isRunning
+        "
+      >
+        Select All
+      </RoundButton>
+      <RoundButton
+        full-width
+        transparent
+        @click="deselectAll"
+        :disabled="!selectedPlaylists.length || task.isRunning"
+      >
+        Deselect All
+      </RoundButton>
+      <RoundButton
+        full-width
+        @click="submitMultiple"
+        :disabled="!selectedPlaylists.length || task.isRunning"
+      >
+        Proceed
+      </RoundButton>
     </template>
   </BottomSheet>
 </template>
@@ -111,9 +105,11 @@ export default defineComponent({
       }
     },
     selectAll() {
-      this.playlists.forEach((playlist: SimplifiedPlaylist) =>
-        this.selectedPlaylists.push(playlist.id)
-      );
+      this.playlists.forEach((playlist: SimplifiedPlaylist) => {
+        if (!this.selectedPlaylists.includes(playlist.id)) {
+          this.selectedPlaylists.push(playlist.id);
+        }
+      });
     },
     submitMultiple() {
       this.close(this.selectedPlaylists);
@@ -152,17 +148,3 @@ export default defineComponent({
   }
 });
 </script>
-
-<style scoped lang="scss">
-.proceed {
-  p {
-    margin-top: 0;
-  }
-  .actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 1fr;
-    grid-column-gap: 1rem;
-  }
-}
-</style>
