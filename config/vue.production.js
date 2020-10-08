@@ -5,6 +5,12 @@ const TerserPlugin = require("terser-webpack-plugin");
 const BuildDatePlugin = require("./BuildDatePlugin");
 
 module.exports = {
+  chainWebpack: config => {
+    config.plugin("html").tap(args => {
+      args[0].title = "Curator";
+      return args;
+    });
+  },
   configureWebpack: {
     output: {
       path: path.resolve(__dirname, "../dist"),
