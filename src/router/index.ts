@@ -13,12 +13,6 @@ const routes: Array<RouteRecordRaw> = [
       import(/* webpackChunkName: "Callback" */ "../views/Callback.vue")
   },
   {
-    path: "/about",
-    name: "About",
-    component: () =>
-      import(/* webpackChunkName: "About" */ "../views/About.vue")
-  },
-  {
     path: "/create",
     name: "Create playlist",
     component: () =>
