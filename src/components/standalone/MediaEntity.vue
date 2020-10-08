@@ -5,8 +5,6 @@
     :small="small"
     @mouseenter="mouseDown"
     @mouseleave="mouseUp"
-    @touchstart="mouseDown"
-    @touchend="mouseUp"
     @contextmenu="rightClickHandler"
   >
     <div class="preview-tooltip" :visible="showTooltip">
