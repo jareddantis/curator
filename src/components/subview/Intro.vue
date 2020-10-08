@@ -57,20 +57,21 @@ export default defineComponent({
   },
   methods: {
     login() {
-      const { authURL, codeVerifier, state } = generatePKCE();
-      const windowName = "Sign in to Curator";
-      const features =
-        "toolbar=no, menubar=no, width=600, height=700, top=100, left=100";
+      generatePKCE().then(({ authURL, codeVerifier, state }) => {
+        const windowName = "Sign in to Curator";
+        const features =
+          "toolbar=no, menubar=no, width=600, height=700, top=100, left=100";
 
-      this.store.commit("setStateToken", state);
-      this.store.commit("setVerifier", codeVerifier);
-      window.removeEventListener("message", this.authListener);
-      window.open(authURL, windowName, features)?.focus();
-      window.addEventListener(
-        "message",
-        event => this.authListener(event),
-        false
-      );
+        this.store.commit("setStateToken", state);
+        this.store.commit("setVerifier", codeVerifier);
+        window.removeEventListener("message", this.authListener);
+        window.open(authURL, windowName, features)?.focus();
+        window.addEventListener(
+          "message",
+          event => this.authListener(event),
+          false
+        );
+      });
     },
     authListener(event: MessageEvent) {
       if (event.data?.type == "curator") {

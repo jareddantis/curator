@@ -1,7 +1,40 @@
-import PKCEChallenge from "pkce-challenge";
 import Axios from "axios";
-// @ts-ignore
-import { v4 as uuid } from "uuid";
+
+/*
+  PKCE (Proof Key Code Exchange) helper functions
+  https://github.com/aaronpk/pkce-vanilla-js/blob/master/index.html
+ */
+
+// Generate a secure random string using the browser crypto functions
+function generateRandomString(): string {
+  const array = new Uint32Array(28);
+  window.crypto.getRandomValues(array);
+  return Array.from(array, dec => ("0" + dec.toString(16)).substr(-2)).join("");
+}
+
+// Calculate the SHA256 hash of the input text.
+function sha256(plain: string): PromiseLike<ArrayBuffer> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(plain);
+  return window.crypto.subtle.digest("SHA-256", data);
+}
+
+// Base64- then URL-encode a string.
+function base64encode(str: ArrayBuffer) {
+  let parsed = "";
+  new Uint8Array(str).forEach(byte => {
+    parsed += String.fromCharCode(byte);
+  });
+  return btoa(parsed)
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+
+// Return the base64-urlencoded sha256 hash for the PKCE challenge
+async function pkceChallengeFromVerifier(v: string) {
+  return base64encode(await sha256(v));
+}
 
 export function serialize(params: { [key: string]: string }): string {
   return Object.keys(params)
@@ -9,17 +42,16 @@ export function serialize(params: { [key: string]: string }): string {
     .join("&");
 }
 
-const baseURL = "https://accounts.spotify.com";
-
-export function generatePKCE(): { [key: string]: string } {
-  const challenge = PKCEChallenge(128);
-  const state = uuid();
+export async function generatePKCE(): Promise<{ [key: string]: string }> {
+  const verifier = generateRandomString();
+  const challenge = await pkceChallengeFromVerifier(verifier);
+  const state = generateRandomString();
   const query = serialize({
     client_id: process.env.VUE_APP_CLIENT_ID,
     response_type: "code",
     redirect_uri: `${process.env.VUE_APP_URL}/callback`,
     code_challenge_method: "S256",
-    code_challenge: challenge.code_challenge,
+    code_challenge: challenge,
     state: state,
     scope: [
       "playlist-modify-private",
@@ -32,8 +64,8 @@ export function generatePKCE(): { [key: string]: string } {
   });
 
   return {
-    authURL: `${baseURL}/authorize?${query}`,
-    codeVerifier: challenge.code_verifier,
+    authURL: `https://accounts.spotify.com/authorize?${query}`,
+    codeVerifier: verifier,
     state
   };
 }
