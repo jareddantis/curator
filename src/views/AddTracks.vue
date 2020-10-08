@@ -14,8 +14,10 @@
         Jump to albums <i class="la la-arrow-down"></i>
       </p>
       <div class="track-results">
-        <h4>Top matching tracks (hover or hold to preview)</h4>
+        <h4>Top matching tracks</h4>
+        <h5>Tap to add to queue, hover or hold to preview</h5>
         <MediaEntity
+          previewable
           small
           v-for="track in results.tracks"
           :key="track.id"
@@ -23,7 +25,8 @@
           :image="track.album.images[0]?.url"
           :explicit="track.explicit"
           :preview-url="track.preview_url"
-          previewable
+          :selected="selectionURIs.includes(track.uri)"
+          @click="trackClickHandler(track)"
         >
           <strong>{{ formatDuration(track.duration_ms) }}</strong> &bull;
           {{ track.artists[0].name }} &bull; {{ track.album.name }} ({{
@@ -51,39 +54,68 @@
         </MediaEntity>
       </div>
     </div>
+    <div class="queue" v-show="selection.length">
+      <p>
+        {{ selection.length }} track{{ selection.length > 1 ? "s" : "" }}
+        in queue
+      </p>
+      <RoundButton full-width @click="reviewQueue = true">
+        Review Queue
+      </RoundButton>
+    </div>
+    <SelectionReview
+      :disabled="addTracksTask.isRunning"
+      :cart="selection"
+      :visible="reviewQueue"
+      @confirm="addTracks"
+      @dismiss="reviewQueue = false"
+      @remove="removeFromQueue"
+    />
+    <Modal loading :visible="addTracksTask.isRunning">
+      Adding tracks to playlist
+    </Modal>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import { mapState, useStore } from "vuex";
-import Header from "@/components/standalone/Header.vue";
-import SearchBar from "@/components/standalone/SearchBar.vue";
-import MediaEntity from "@/components/standalone/MediaEntity.vue";
-import search from "@/api/composables/Search";
-import getPlaylist from "@/api/composables/GetPlaylist";
 import {
   SimplifiedAlbum,
   SimplifiedTrack
 } from "spotify-web-api-ts/types/types/SpotifyObjects";
+import Header from "@/components/standalone/Header.vue";
+import SearchBar from "@/components/standalone/SearchBar.vue";
+import MediaEntity from "@/components/standalone/MediaEntity.vue";
+import Modal from "@/components/base/Modal.vue";
+import RoundButton from "@/components/base/RoundButton.vue";
+import SelectionReview from "@/components/impl/SelectionReview.vue";
+import search from "@/api/composables/Search";
+import getPlaylist from "@/api/composables/GetPlaylist";
+import addTracks from "@/api/composables/AddTracks";
 
 export default defineComponent({
   name: "AddTracks",
   components: {
     Header,
+    MediaEntity,
+    Modal,
+    RoundButton,
     SearchBar,
-    MediaEntity
+    SelectionReview
   },
   computed: mapState(["id", "target"]),
   data() {
     return {
       playlistName: "...",
-      selection: [],
+      selection: [] as SimplifiedTrack[],
+      selectionURIs: [] as string[],
       results: {
         ready: false,
         albums: [] as SimplifiedAlbum[],
         tracks: [] as SimplifiedTrack[]
-      }
+      },
+      reviewQueue: false
     };
   },
   mounted() {
@@ -108,6 +140,15 @@ export default defineComponent({
       });
   },
   methods: {
+    addTracks() {
+      this.store
+        .dispatch("getUpdatedToken")
+        .then(token =>
+          this.addTracksTask.perform(token, this.target[0], this.selection)
+        )
+        .then(() => this.$router.push("/"))
+        .catch(e => window.alert(e));
+    },
     doSearch(query: string) {
       if (query.length) {
         this.results.ready = false;
@@ -141,10 +182,32 @@ export default defineComponent({
       const albumResults = this.$refs.albums as HTMLDivElement;
       const offset = albumResults.offsetTop - window.innerHeight / 3;
       window.scrollTo({ left: 0, top: offset, behavior: "smooth" });
+    },
+    removeFromQueue(ids: string[]) {
+      ids.forEach((id: string) => {
+        const uri = `spotify:track:${id}`;
+        if (this.selectionURIs.includes(uri)) {
+          const index = this.selectionURIs.indexOf(uri);
+          this.selection.splice(index, 1);
+          this.selectionURIs.splice(index, 1);
+        }
+      });
+    },
+    trackClickHandler(track: SimplifiedTrack) {
+      const uri = `spotify:track:${track.id}`;
+      if (this.selectionURIs.includes(uri)) {
+        const index = this.selectionURIs.indexOf(uri);
+        this.selection.splice(index, 1);
+        this.selectionURIs.splice(index, 1);
+      } else {
+        this.selection.push(track);
+        this.selectionURIs.push(uri);
+      }
     }
   },
   setup() {
     return {
+      addTracksTask: addTracks(),
       getPlaylistTask: getPlaylist(),
       searchTask: search(),
       store: useStore()
@@ -158,16 +221,32 @@ export default defineComponent({
   .album-results {
     margin-top: 3rem;
   }
-  h4 {
+  h4,
+  h5 {
     margin-top: 0;
     font-weight: 500;
     color: #555;
-    font-size: 0.875rem;
+  }
+  h4 {
+    margin-bottom: 0.5rem;
   }
   .jump {
     text-align: right;
     font-weight: 700;
     cursor: pointer;
+  }
+}
+.queue {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  background: white;
+  width: 100%;
+  padding: 1.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+
+  p {
+    margin-top: 0;
   }
 }
 </style>
