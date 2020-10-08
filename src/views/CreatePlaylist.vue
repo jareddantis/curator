@@ -129,7 +129,7 @@ import { mapState, useStore } from "vuex";
 import Header from "@/components/standalone/Header.vue";
 import RoundButton from "@/components/base/RoundButton.vue";
 import Modal from "@/components/base/Modal.vue";
-import useCreatePlaylistTask from "@/api/composables/CreatePlaylist";
+import createPlaylist from "@/api/composables/CreatePlaylist";
 
 export default defineComponent({
   name: "CreatePlaylist",
@@ -152,7 +152,7 @@ export default defineComponent({
   setup() {
     return {
       store: useStore(),
-      task: useCreatePlaylistTask()
+      task: createPlaylist()
     };
   },
   methods: {

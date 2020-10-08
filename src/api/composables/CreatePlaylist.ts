@@ -2,7 +2,7 @@ import { useTask } from "vue-concurrency";
 import spotify from "../spotify-web-api";
 import Axios from "axios";
 
-export default function useCreatePlaylistTask() {
+export default function createPlaylist() {
   return useTask(function*(signal, userID, token, playlistData) {
     spotify.setAccessToken(token);
     const { name, collaborative, isPublic, description, art } = playlistData;
