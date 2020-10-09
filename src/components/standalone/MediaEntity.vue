@@ -5,7 +5,6 @@
     :small="small"
     @mouseenter="mouseDown"
     @mouseleave="mouseUp"
-    @contextmenu="rightClickHandler"
   >
     <div class="preview-tooltip" :visible="showTooltip">
       <p>{{ previewUrl ? "Previewing" : "No preview available" }}</p>
@@ -50,7 +49,8 @@ export default defineComponent({
     return {
       holdTimer: 0,
       player: new Audio(),
-      showTooltip: false
+      showTooltip: false,
+      small: window.matchMedia("(max-width: 768px)").matches
     };
   },
   methods: {
@@ -109,7 +109,6 @@ export default defineComponent({
       default: ""
     },
     selected: Boolean,
-    small: Boolean,
     tag: {
       type: String,
       default: ""
@@ -135,7 +134,7 @@ export default defineComponent({
   .preview-tooltip {
     position: absolute;
     z-index: 10;
-    bottom: 3rem;
+    bottom: 4rem;
     left: 0;
     background: #9c0032;
     color: white;
@@ -199,10 +198,13 @@ export default defineComponent({
     }
   }
   &[small="true"] {
-    grid-template-columns: 2rem 1fr;
-    grid-template-rows: 2rem;
+    grid-template-columns: 2.25rem 1fr;
+    grid-template-rows: 2.25rem;
     margin-bottom: 1.5rem;
 
+    .preview-tooltip {
+      bottom: 3rem;
+    }
     .progress {
       top: -0.75rem;
       height: 3.5rem;
@@ -213,7 +215,10 @@ export default defineComponent({
     .info .info-content {
       .title,
       .subtitle {
-        font-size: 0.75rem;
+        font-size: 0.875rem;
+      }
+      .tag {
+        font-size: 0.625rem;
       }
     }
     &:active {
@@ -266,7 +271,7 @@ export default defineComponent({
         .no-overflow .tag {
           margin-left: 0.375rem;
           font-weight: 800;
-          padding: 0 3px 1px;
+          padding: 0 3px;
         }
       }
       &.detail .tag {
@@ -294,10 +299,10 @@ export default defineComponent({
           font-weight: 700;
           background: black;
           color: white;
-          padding: 0 2px 1px;
+          padding: 0 2px;
           border-radius: 3px;
           border: 1px solid black;
-          font-size: 0.625rem;
+          font-size: 0.75rem;
           vertical-align: middle;
         }
       }

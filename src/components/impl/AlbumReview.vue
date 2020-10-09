@@ -9,7 +9,6 @@
     <template v-slot:content>
       <MediaEntity
         previewable
-        small
         v-for="track in albumTracks"
         :key="track.id"
         :name="track.name"

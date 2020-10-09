@@ -18,7 +18,6 @@
         <h5>Tap to add to queue, hover or hold to preview</h5>
         <MediaEntity
           previewable
-          small
           v-for="track in results.tracks"
           :key="track.id"
           :name="track.name"
@@ -37,7 +36,6 @@
       <div class="album-results" ref="albums">
         <h4>Top matching albums</h4>
         <MediaEntity
-          small
           v-for="album in results.albums"
           :key="album.id"
           :name="album.name"
