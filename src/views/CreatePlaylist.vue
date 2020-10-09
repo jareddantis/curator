@@ -213,7 +213,8 @@ export default defineComponent({
           })
           .then((id: string) => {
             if (this.playlistPopulate) {
-              this.$router.push(`/add-tracks/${id}`);
+              this.store.commit("setTarget", [id]);
+              this.$router.replace("/add-tracks");
             } else {
               this.$router.push("/");
             }
