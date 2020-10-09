@@ -1,0 +1,13 @@
+// Timing functions
+$easeInCubic: cubic-bezier(0.32, 0, 0.67, 0);
+$easeOutCubic: cubic-bezier(0.33, 1, 0.68, 1);
+
+// Interactive elements
+@mixin bouncy($finalScale: 0.98, $duration: 100ms) {
+  transform: scale(1) translateZ(0);
+  transition: transform $duration $easeOutCubic;
+
+  &:active {
+    transform: scale($finalScale);
+  }
+}

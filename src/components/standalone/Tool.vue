@@ -1,5 +1,5 @@
 <template>
-  <div class="tool bouncy" @click="navigate">
+  <div class="tool" @click="navigate">
     <div class="tool-content">
       <i :class="icon"></i>
       <div class="tool-text">
@@ -37,6 +37,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .tool {
+  @include bouncy;
   display: inline-block;
   background-color: black;
   border-radius: 16px;

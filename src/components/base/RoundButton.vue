@@ -1,6 +1,5 @@
 <template>
   <button
-    class="bouncy"
     :full-width="fullWidth"
     :small="small"
     :disabled="disabled"
@@ -26,6 +25,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 button {
+  @include bouncy;
   border: none;
   background: black;
   color: white;

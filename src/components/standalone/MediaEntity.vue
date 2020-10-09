@@ -1,6 +1,6 @@
 <template>
   <div
-    class="media-entity bouncy"
+    class="media-entity"
     :selected="selected"
     :small="small"
     @mouseenter="mouseDown"
@@ -120,6 +120,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .media-entity {
+  @include bouncy;
   position: relative;
   width: 100%;
   display: grid;

@@ -98,13 +98,4 @@ export default defineComponent({
     margin: 0 1.5rem;
   }
 }
-
-.bouncy {
-  transform: scale(1);
-  transition: transform 100ms $easeOutCubic;
-
-  &:active {
-    transform: scale(0.98);
-  }
-}
 </style>

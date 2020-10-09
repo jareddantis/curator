@@ -313,6 +313,7 @@ export default defineComponent({
         }
         &.file {
           label {
+            @include bouncy;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -353,11 +354,13 @@ export default defineComponent({
           }
         }
         &.checkbox {
-          label {
-            .la-toggle-off {
+          label i {
+            @include bouncy(0.92, $duration: 200ms);
+
+            &.la-toggle-off {
               display: block;
             }
-            .la-toggle-on {
+            &.la-toggle-on {
               display: none;
             }
           }

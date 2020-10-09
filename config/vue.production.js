@@ -3,8 +3,10 @@ const path = require("path");
 const { HashedModuleIdsPlugin } = require("webpack");
 const TerserPlugin = require("terser-webpack-plugin");
 const BuildDatePlugin = require("./BuildDatePlugin");
+const css = require("./SCSSVariables");
 
 module.exports = {
+  css,
   chainWebpack: config => {
     config.plugin("html").tap(args => {
       args[0].title = "Curator";
