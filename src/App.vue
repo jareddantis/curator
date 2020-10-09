@@ -79,65 +79,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-// Sane defaults
-:root {
-  font-size: 16px;
-}
-* {
-  box-sizing: border-box;
-}
-html {
-  touch-action: manipulation;
-  min-height: 100vh;
-  background: #232323;
-}
-body {
-  margin: 0;
-  background: white;
-}
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-li,
-a,
-button,
-input,
-td,
-span,
-label {
-  font-family: "Inter", -apple-system, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-}
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-weight: 700;
-}
-p,
-li,
-a,
-button,
-input,
-td,
-span,
-label {
-  font-weight: 450;
-}
-button {
-  outline: none;
-  cursor: pointer;
-}
+@import "styles/_reset";
+@import "styles/_transitions";
 
-// Actual styles
 .app-view[with-margin="true"] {
   max-width: calc(768px + 4rem);
   width: 100%;
@@ -155,42 +99,12 @@ button {
   }
 }
 
-// Router transitions
-.zoom-in-leave-from,
-.zoom-in-enter-to,
-.zoom-out-leave-from,
-.zoom-out-enter-to {
-  opacity: 1;
+.bouncy {
   transform: scale(1);
-}
-.zoom-in-leave-to,
-.zoom-in-enter-from,
-.zoom-out-leave-to,
-.zoom-out-enter-from {
-  opacity: 0;
-}
-.zoom-in-leave-to,
-.zoom-out-enter-from {
-  transform: scale(1.02);
-}
-.zoom-in-enter-from,
-.zoom-out-leave-to {
-  transform: scale(0.98);
-}
-.zoom-in-leave-active,
-.zoom-in-enter-active,
-.zoom-out-leave-active,
-.zoom-out-enter-active {
-  transition-duration: 200ms;
-  transition-property: height, opacity, transform;
-  overflow: hidden;
-}
-.zoom-in-leave-active,
-.zoom-out-leave-active {
-  transition-timing-function: cubic-bezier(0.32, 0, 0.67, 0);
-}
-.zoom-in-enter-active,
-.zoom-out-enter-active {
-  transition-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+  transition: transform 100ms $easeOutCubic;
+
+  &:active {
+    transform: scale(0.98);
+  }
 }
 </style>

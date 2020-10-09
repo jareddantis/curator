@@ -1,0 +1,85 @@
+@import "_easings";
+
+.zoom-in-leave-from,
+.zoom-in-enter-to,
+.zoom-out-leave-from,
+.zoom-out-enter-to,
+.land-enter-to,
+.land-leave-from {
+  opacity: 1;
+  transform: scale(1);
+}
+.zoom-in-leave-to,
+.zoom-in-enter-from,
+.zoom-out-leave-to,
+.zoom-out-enter-from,
+.land-enter-from,
+.land-leave-to,
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
+}
+.land-enter-from {
+  transform: scale(1.1);
+}
+.land-leave-to {
+  transform: scale(0.9);
+}
+.zoom-in-leave-to,
+.zoom-out-enter-from {
+  transform: scale(1.02);
+}
+.zoom-in-enter-from,
+.zoom-out-leave-to {
+  transform: scale(0.98);
+}
+.slide-enter-to,
+.slide-leave-from {
+  transform: translateY(0);
+}
+.slide-enter-from,
+.slide-leave-to {
+  transform: translateY(100vh);
+}
+.zoom-in-leave-active,
+.zoom-in-enter-active,
+.zoom-out-leave-active,
+.zoom-out-enter-active {
+  transition-duration: 200ms;
+  transition-property: height, opacity, transform;
+  overflow: hidden;
+}
+.zoom-in-leave-active,
+.zoom-out-leave-active {
+  transition-timing-function: $easeInCubic;
+}
+.zoom-in-enter-active,
+.zoom-out-enter-active {
+  transition-timing-function: $easeOutCubic;
+}
+.land-enter-active {
+  transition: all 200ms $easeOutCubic;
+}
+.land-leave-active {
+  transition: all 100ms ease;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 200ms ease;
+}
+.slide-enter-active,
+.slide-leave-active {
+  transition-property: transform;
+}
+.slide-enter-active {
+  transition-duration: 400ms;
+  transition-timing-function: $easeOutCubic;
+}
+.slide-leave-active {
+  transition-duration: 250ms;
+  transition-timing-function: $easeInCubic;
+}

@@ -1,5 +1,6 @@
 <template>
   <button
+    class="bouncy"
     :full-width="fullWidth"
     :small="small"
     :disabled="disabled"
@@ -39,7 +40,6 @@ button {
   &:active {
     background: black;
     color: #aaa;
-    transform: scale(0.97);
   }
   &[full-width="true"] {
     width: 100%;

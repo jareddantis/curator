@@ -1,5 +1,5 @@
 <template>
-  <div class="tool" @click="navigate">
+  <div class="tool bouncy" @click="navigate">
     <div class="tool-content">
       <i :class="icon"></i>
       <div class="tool-text">
@@ -42,7 +42,6 @@ export default defineComponent({
   border-radius: 16px;
   color: white;
   height: 8rem;
-  transition: all 150ms cubic-bezier(0.22, 1, 0.36, 1);
   cursor: pointer;
   user-select: none;
 
@@ -52,7 +51,6 @@ export default defineComponent({
   &:active {
     background-color: black;
     color: #aaa;
-    transform: scale(0.97);
   }
 }
 .tool-content {

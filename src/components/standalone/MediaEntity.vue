@@ -1,6 +1,6 @@
 <template>
   <div
-    class="media-entity"
+    class="media-entity bouncy"
     :selected="selected"
     :small="small"
     @mouseenter="mouseDown"
@@ -127,7 +127,6 @@ export default defineComponent({
   grid-template-rows: 3rem;
   grid-column-gap: 1rem;
   margin-bottom: 2rem;
-  transition: transform 150ms cubic-bezier(0.22, 1, 0.36, 1);
   cursor: pointer;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
@@ -175,9 +174,6 @@ export default defineComponent({
     height: 5rem;
     top: -1rem;
     left: 0;
-  }
-  &:active {
-    transform: scale(0.98);
   }
   &:not(:last-child):after {
     content: " ";
