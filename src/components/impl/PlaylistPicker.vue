@@ -4,6 +4,7 @@
     :visible="visible"
     ref="root"
     :no-actions="!plural"
+    @dismiss="$emit('dismiss')"
   >
     <template v-slot:title>Which playlist{{ plural ? "s" : "" }}?</template>
     <template v-slot:subtitle>
