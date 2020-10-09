@@ -54,11 +54,12 @@
       />
     </div>
     <PlaylistPicker
+      ref="picker"
       :action="pickPurpose"
       :visible="willPickPlaylist"
       :plural="willPickMultiple"
       @dismiss="willPickPlaylist = false"
-      @playlist-picked="$router.push(`/${nextRoute}`)"
+      @picked="openTool"
     ></PlaylistPicker>
   </div>
 </template>
@@ -90,6 +91,10 @@ export default defineComponent({
     };
   },
   methods: {
+    openTool() {
+      this.willPickPlaylist = false;
+      window.setTimeout(() => this.$router.push(`/${this.nextRoute}`), 200);
+    },
     pickPlaylist(route: string, action: string, plural = false) {
       this.nextRoute = route;
       this.pickPurpose = action;

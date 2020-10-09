@@ -82,12 +82,13 @@ export default defineComponent({
       playlists: [] as SimplifiedPlaylist[]
     };
   },
+  emits: ["dismiss", "picked"],
   methods: {
     close(result: string[]) {
       const rootSheet = this.$refs.root as typeof BottomSheet;
       rootSheet.close();
       this.store.commit("setTarget", result);
-      this.$emit("playlist-picked");
+      this.$emit("picked");
     },
     deselectAll() {
       this.selectedPlaylists = [];
