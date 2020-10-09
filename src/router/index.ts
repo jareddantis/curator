@@ -25,6 +25,14 @@ const routes: Array<RouteRecordRaw> = [
     name: "Add tracks",
     component: () =>
       import(/* webpackChunkName: "AddTracks" */ "../views/AddTracks.vue")
+  },
+  {
+    path: "/edit",
+    name: "Edit playlist details",
+    component: () =>
+      import(
+        /* webpackChunkName: "EditPlaylistDetails" */ "../views/EditPlaylistDetails.vue"
+      )
   }
 ];
 
