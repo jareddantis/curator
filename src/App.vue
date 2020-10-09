@@ -80,7 +80,6 @@ export default defineComponent({
 
 <style lang="scss">
 @import "styles/_reset";
-@import "styles/_transitions";
 
 .app-view[with-margin="true"] {
   max-width: calc(768px + 4rem);

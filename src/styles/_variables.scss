@@ -11,3 +11,6 @@ $easeOutCubic: cubic-bezier(0.33, 1, 0.68, 1);
     transform: scale($finalScale);
   }
 }
+
+// Router transitions
+@import "_transitions";

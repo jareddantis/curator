@@ -1,23 +1,25 @@
 <template>
-  <BottomSheet :visible="visible" ref="root">
-    <template v-slot:title>Review queue</template>
+  <BottomSheet :loading="task.isRunning" :visible="visible" ref="root">
+    <template v-slot:title>
+      Add tracks from &quot;{{ album.name }}&quot;
+    </template>
     <template v-slot:subtitle>
-      Tap a track to remove from your queue.
+      You can add everything or uncheck the ones you don't want.
     </template>
     <template v-slot:content>
       <MediaEntity
+        previewable
         small
-        v-for="track in localCart"
+        v-for="track in albumTracks"
         :key="track.id"
         :name="track.name"
-        :image="track.album.images[0]?.url"
+        :image="album.images[0]?.url"
         :explicit="track.explicit"
+        :preview-url="track.preview_url"
         :selected="selection.includes(track.id)"
         @click="clickHandler(track.id)"
       >
-        {{ track.artists[0].name }} &bull; {{ track.album.name }} ({{
-          track.album.release_date.split("-")[0]
-        }})
+        {{ track.artists[0].name }}
       </MediaEntity>
     </template>
     <template v-slot:actions-caption v-if="selection.length">
@@ -25,7 +27,7 @@
       selected
     </template>
     <template v-slot:actions-caption v-else>
-      {{ localCart.length }} track{{ localCart.length !== 1 ? "s" : "" }} in
+      {{ albumTracks.length }} track{{ albumTracks.length !== 1 ? "s" : "" }} in
       queue
     </template>
     <template v-slot:actions>
@@ -33,7 +35,7 @@
         full-width
         transparent
         @click="selectAll"
-        :disabled="selection.length === localCart.length || disabled"
+        :disabled="selection.length === albumTracks.length || task.isRunning"
       >
         Select All
       </RoundButton>
@@ -41,23 +43,14 @@
         full-width
         transparent
         @click="deselectAll"
-        :disabled="!selection.length || disabled"
+        :disabled="!selection.length || task.isRunning"
       >
         Deselect All
       </RoundButton>
       <RoundButton
         full-width
-        @click="removeSelection"
-        :disabled="disabled"
-        v-if="selection.length"
-      >
-        Dequeue
-      </RoundButton>
-      <RoundButton
-        full-width
         @click="proceed"
-        :disabled="!cart.length || disabled"
-        v-else
+        :disabled="!selection.length || task.isRunning"
       >
         Confirm
       </RoundButton>
@@ -67,13 +60,19 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { useStore } from "vuex";
+import {
+  SimplifiedAlbum,
+  SimplifiedTrack
+} from "spotify-web-api-ts/types/types/SpotifyObjects";
+import MediaEntity from "@/components/standalone/MediaEntity.vue";
 import BottomSheet from "@/components/base/BottomSheet.vue";
 import RoundButton from "@/components/base/RoundButton.vue";
-import MediaEntity from "@/components/standalone/MediaEntity.vue";
+import getAlbumTracks from "@/api/composables/GetAlbumTracks";
 import { AugmentedTrack } from "@/types/addtracks";
 
 export default defineComponent({
-  name: "SelectionReview",
+  name: "AlbumReview",
   components: {
     MediaEntity,
     BottomSheet,
@@ -81,11 +80,11 @@ export default defineComponent({
   },
   data() {
     return {
-      localCart: [] as AugmentedTrack[],
+      albumTracks: [] as SimplifiedTrack[],
       selection: [] as string[]
     };
   },
-  emits: ["confirm", "remove"],
+  emits: ["confirm"],
   methods: {
     clickHandler(id: string) {
       if (this.selection.includes(id)) {
@@ -98,12 +97,8 @@ export default defineComponent({
     deselectAll() {
       this.selection = [];
     },
-    removeSelection() {
-      this.$emit("remove", this.selection);
-      this.deselectAll();
-    },
     selectAll() {
-      this.localCart.forEach((track: AugmentedTrack) => {
+      this.albumTracks.forEach((track: SimplifiedTrack) => {
         if (!this.selection.includes(track.id)) {
           this.selection.push(track.id);
         }
@@ -111,24 +106,45 @@ export default defineComponent({
     },
     proceed() {
       const rootSheet = this.$refs.root as typeof BottomSheet;
+      const result: AugmentedTrack[] = [];
+      this.albumTracks
+        .filter((track: SimplifiedTrack) => this.selection.includes(track.id))
+        .forEach((track: SimplifiedTrack) => {
+          result.push({
+            ...track,
+            album: this.album as SimplifiedAlbum
+          });
+        });
       rootSheet.close();
-      this.$emit("confirm");
+      this.$emit("confirm", result);
     }
   },
-  mounted() {
-    this.localCart = this.cart;
-  },
   props: {
-    cart: {
-      default: [] as AugmentedTrack[],
+    album: {
       required: true
     },
     disabled: Boolean,
     visible: Boolean
   },
+  setup() {
+    return {
+      task: getAlbumTracks(),
+      store: useStore()
+    };
+  },
   watch: {
-    cart(newCart: AugmentedTrack[]) {
-      this.localCart = newCart;
+    visible(after) {
+      if (after) {
+        this.store
+          .dispatch("getUpdatedToken")
+          .then(token =>
+            this.task.perform(token, (this.album as SimplifiedAlbum).id)
+          )
+          .then(tracks => {
+            this.albumTracks = tracks;
+            this.selection = tracks.map((track: SimplifiedTrack) => track.id);
+          });
+      }
     }
   }
 });

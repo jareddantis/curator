@@ -37,12 +37,13 @@
       <div class="album-results" ref="albums">
         <h4>Top matching albums</h4>
         <MediaEntity
+          small
           v-for="album in results.albums"
           :key="album.id"
           :name="album.name"
           :image="album.images[0]?.url"
           :tag="album.album_type"
-          small
+          @click="showAlbumTracks(album)"
         >
           {{ album.artists[0].name }} &bull;
           {{ album.release_date.split("-")[0] }}
@@ -71,6 +72,13 @@
       @dismiss="reviewQueue = false"
       @remove="removeFromQueue"
     />
+    <AlbumReview
+      :disabled="addTracksTask.isRunning"
+      :album="sourceAlbum.raw"
+      :visible="sourceAlbum.review"
+      @confirm="addFromAlbum"
+      @dismiss="sourceAlbum.review = false"
+    />
     <Modal loading :visible="addTracksTask.isRunning">
       Adding tracks to playlist
     </Modal>
@@ -82,13 +90,15 @@ import { defineComponent } from "vue";
 import { mapState, useStore } from "vuex";
 import {
   SimplifiedAlbum,
-  SimplifiedTrack
+  Track
 } from "spotify-web-api-ts/types/types/SpotifyObjects";
+import { AugmentedTrack } from "@/types/addtracks";
 import Header from "@/components/standalone/Header.vue";
 import SearchBar from "@/components/standalone/SearchBar.vue";
 import MediaEntity from "@/components/standalone/MediaEntity.vue";
 import Modal from "@/components/base/Modal.vue";
 import RoundButton from "@/components/base/RoundButton.vue";
+import AlbumReview from "@/components/impl/AlbumReview.vue";
 import SelectionReview from "@/components/impl/SelectionReview.vue";
 import search from "@/api/composables/Search";
 import getPlaylist from "@/api/composables/GetPlaylist";
@@ -97,6 +107,7 @@ import addTracks from "@/api/composables/AddTracks";
 export default defineComponent({
   name: "AddTracks",
   components: {
+    AlbumReview,
     Header,
     MediaEntity,
     Modal,
@@ -108,12 +119,16 @@ export default defineComponent({
   data() {
     return {
       playlistName: "...",
-      selection: [] as SimplifiedTrack[],
+      selection: [] as AugmentedTrack[],
       selectionURIs: [] as string[],
+      sourceAlbum: {
+        raw: {} as SimplifiedAlbum,
+        review: false
+      },
       results: {
         ready: false,
         albums: [] as SimplifiedAlbum[],
-        tracks: [] as SimplifiedTrack[]
+        tracks: [] as AugmentedTrack[]
       },
       reviewQueue: false
     };
@@ -140,6 +155,12 @@ export default defineComponent({
       });
   },
   methods: {
+    addFromAlbum(tracks: AugmentedTrack[]) {
+      this.selection = this.selection.concat(tracks);
+      this.selectionURIs = this.selectionURIs.concat(
+        tracks.map((track: AugmentedTrack) => track.uri)
+      );
+    },
     addTracks() {
       this.store
         .dispatch("getUpdatedToken")
@@ -193,7 +214,11 @@ export default defineComponent({
         }
       });
     },
-    trackClickHandler(track: SimplifiedTrack) {
+    showAlbumTracks(album: SimplifiedAlbum) {
+      this.sourceAlbum.raw = album;
+      this.sourceAlbum.review = true;
+    },
+    trackClickHandler(track: Track) {
       const uri = `spotify:track:${track.id}`;
       if (this.selectionURIs.includes(uri)) {
         const index = this.selectionURIs.indexOf(uri);

@@ -134,7 +134,7 @@ export default defineComponent({
 
   .preview-tooltip {
     position: absolute;
-    z-index: 5;
+    z-index: 10;
     bottom: 3rem;
     left: 0;
     background: #9c0032;
