@@ -3,8 +3,14 @@
     <Header>
       <template v-slot:default>What would you like to do today?</template>
       <template v-slot:subtitle>
-        You've created <strong>{{ playlistCount }} playlists</strong> with a
-        total of <strong>{{ trackCount }}</strong> tracks.
+        You've created
+        <strong>
+          {{ playlistCount }} playlist{{ playlistCount !== "1" ? "s" : "" }}
+        </strong>
+        with a total of
+        <strong>
+          {{ trackCount }} track{{ trackCount !== "1" ? "s" : "" }}.
+        </strong>
       </template>
     </Header>
     <div class="tools-body">
@@ -84,8 +90,8 @@ export default defineComponent({
     return {
       nextRoute: "",
       pickPurpose: "",
-      playlistCount: "0",
-      trackCount: "0",
+      playlistCount: "...",
+      trackCount: "...",
       willPickPlaylist: false,
       willPickMultiple: false
     };
