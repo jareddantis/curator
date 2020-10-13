@@ -2,7 +2,6 @@
   <div
     class="media-entity"
     :selected="selected"
-    :small="small"
     @mouseenter="mouseDown"
     @mouseleave="mouseUp"
   >
@@ -56,7 +55,6 @@ export default defineComponent({
       holdTimer: 0,
       player: new Audio(),
       showTooltip: false,
-      small: window.matchMedia("(max-width: 768px)").matches,
       tooltipText: "Previewing"
     };
   },
@@ -236,34 +234,6 @@ export default defineComponent({
       color: #bf0000;
     }
   }
-  &[small="true"] {
-    grid-template-columns: 2.25rem 1fr;
-    grid-template-rows: 2.25rem;
-    margin-bottom: 1.5rem;
-
-    .preview-tooltip {
-      bottom: 3.5rem;
-    }
-    .progress {
-      top: -0.75rem;
-      height: 3.75rem;
-    }
-    &:not(:last-child):after {
-      bottom: -0.75rem;
-    }
-    .info .info-content {
-      .title,
-      .subtitle {
-        font-size: 0.875rem;
-      }
-      .tag {
-        font-size: 0.625rem;
-      }
-    }
-    &:active {
-      transform: scale(0.99);
-    }
-  }
 }
 
 .art {
@@ -345,6 +315,37 @@ export default defineComponent({
           vertical-align: middle;
         }
       }
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .media-entity {
+    grid-template-columns: 2.25rem 1fr;
+    grid-template-rows: 2.25rem;
+    margin-bottom: 1.5rem;
+
+    .preview-tooltip {
+      bottom: 3.5rem;
+    }
+    .progress {
+      top: -0.75rem;
+      height: 3.75rem;
+    }
+    &:not(:last-child):after {
+      bottom: -0.75rem;
+    }
+    .info .info-content {
+      .title,
+      .subtitle {
+        font-size: 0.875rem;
+      }
+      .tag {
+        font-size: 0.625rem;
+      }
+    }
+    &:active {
+      transform: scale(0.99);
     }
   }
 }
