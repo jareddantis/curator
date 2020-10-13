@@ -7,7 +7,7 @@
     @mouseleave="mouseUp"
   >
     <div class="preview-tooltip" :visible="showTooltip">
-      <p>{{ previewUrl ? "Previewing" : "No preview available" }}</p>
+      <p>{{ tooltipText }}</p>
     </div>
     <div class="progress" ref="progress"></div>
     <div class="art">
@@ -37,20 +37,27 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { useStore } from "vuex";
+import getTrack from "@/api/composables/GetTrack";
 
 export default defineComponent({
   name: "MediaEntity",
   computed: {
     art(): string {
       return this.image || "/img/dummy-art.svg";
+    },
+    preview(): string {
+      return this.previewUrl || this.fetchedPreviewUrl;
     }
   },
   data() {
     return {
+      fetchedPreviewUrl: "",
       holdTimer: 0,
       player: new Audio(),
       showTooltip: false,
-      small: window.matchMedia("(max-width: 768px)").matches
+      small: window.matchMedia("(max-width: 768px)").matches,
+      tooltipText: "Previewing"
     };
   },
   methods: {
@@ -60,7 +67,7 @@ export default defineComponent({
         if (this.previewable) {
           this.showTooltip = true;
         }
-        if (this.previewUrl) {
+        if (this.preview) {
           this.player.play();
         }
       }, 500);
@@ -73,7 +80,7 @@ export default defineComponent({
       if (this.previewable) {
         e?.preventDefault();
       }
-      if (this.previewUrl) {
+      if (this.preview) {
         if (!this.player.paused) {
           this.player.pause();
           this.player.currentTime = 0;
@@ -95,6 +102,25 @@ export default defineComponent({
     this.player.onended = () => {
       this.player.currentTime = 0;
     };
+
+    // The Spotify Search endpoint often returns a null preview_url
+    // for track results, but the same tracks have a proper preview_url
+    // when queried through the Get a Track endpoint.
+    // Let's try to make use of that here.
+    if (this.previewable && !this.previewUrl) {
+      this.tooltipText = "Looking for preview";
+      this.store
+        .dispatch("getUpdatedToken")
+        .then(token => this.task.perform(token, this.trackId))
+        .then(({ preview_url }) => {
+          if (preview_url) {
+            this.tooltipText = "Previewing";
+            this.fetchedPreviewUrl = preview_url;
+          } else {
+            this.tooltipText = "No preview available";
+          }
+        });
+    }
   },
   props: {
     explicit: Boolean,
@@ -112,6 +138,19 @@ export default defineComponent({
     tag: {
       type: String,
       default: ""
+    },
+    trackId: String
+  },
+  setup() {
+    return {
+      store: useStore(),
+      task: getTrack()
+    };
+  },
+  watch: {
+    preview(after) {
+      this.player.src = after;
+      this.player.currentTime = 0;
     }
   }
 });

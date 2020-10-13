@@ -25,6 +25,7 @@
           :explicit="track.explicit"
           :preview-url="track.preview_url"
           :selected="selectionURIs.includes(track.uri)"
+          :track-id="track.id"
           @click="trackClickHandler(track)"
         >
           <strong>{{ formatDuration(track.duration_ms) }}</strong> &bull;
@@ -88,10 +89,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { mapState, useStore } from "vuex";
-import {
-  SimplifiedAlbum,
-  Track
-} from "spotify-web-api-ts/types/types/SpotifyObjects";
+import { SimplifiedAlbum } from "spotify-web-api-ts/types/types/SpotifyObjects";
 import { AugmentedTrack } from "@/types/addtracks";
 import { formatDuration } from "@/api/helpers";
 import Header from "@/components/standalone/Header.vue";
@@ -211,7 +209,7 @@ export default defineComponent({
       this.sourceAlbum.raw = album;
       this.sourceAlbum.review = true;
     },
-    trackClickHandler(track: Track) {
+    trackClickHandler(track: AugmentedTrack) {
       const uri = `spotify:track:${track.id}`;
       if (this.selectionURIs.includes(uri)) {
         const index = this.selectionURIs.indexOf(uri);
