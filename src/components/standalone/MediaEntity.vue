@@ -93,9 +93,8 @@ export default defineComponent({
     this.player.src = this.previewUrl;
     this.player.ontimeupdate = () => {
       const bar = this.$refs.progress as HTMLDivElement;
-      bar.style.width = `${Math.ceil(
-        (this.player.currentTime / this.player.duration) * 100
-      )}%`;
+      bar.style.width = `${(this.player.currentTime / this.player.duration) *
+        100}%`;
     };
     this.player.onended = () => {
       this.player.currentTime = 0;
