@@ -5,7 +5,7 @@
         <div class="logo">
           <img src="@/img/logo.svg" alt="Curator" />
         </div>
-        <h3>Curator</h3>
+        <h3>Curator <span class="beta">beta</span></h3>
       </div>
       <div class="sections">
         <div class="section">
@@ -88,6 +88,10 @@ export default defineComponent({
   .footer-content {
     max-width: 768px;
     width: 100%;
+  }
+  .beta {
+    font-weight: 400;
+    opacity: 0.7;
   }
 }
 .brand {
