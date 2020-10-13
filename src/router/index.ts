@@ -33,6 +33,12 @@ const routes: Array<RouteRecordRaw> = [
       import(
         /* webpackChunkName: "EditPlaylistDetails" */ "../views/EditPlaylistDetails.vue"
       )
+  },
+  {
+    path: "/randomize",
+    name: "Randomize playlist",
+    component: () =>
+      import(/* webpackChunkName: "Randomize" */ "../views/Randomize.vue")
   }
 ];
 

@@ -10,7 +10,7 @@
       </template>
     </Header>
     <div class="search-results" v-show="results.ready">
-      <p class="jump" @click="jumpToAlbums">
+      <p class="jump-link" @click="jumpToAlbums">
         Jump to albums <i class="la la-arrow-down"></i>
       </p>
       <div class="track-results">
@@ -53,14 +53,16 @@
         </MediaEntity>
       </div>
     </div>
-    <div class="queue" v-show="selection.length">
-      <p>
-        {{ selection.length }} track{{ selection.length > 1 ? "s" : "" }}
-        in queue
-      </p>
-      <RoundButton full-width @click="reviewQueue = true">
-        Review Queue
-      </RoundButton>
+    <div class="view-action" v-show="selection.length">
+      <div class="view-action-content">
+        <p>
+          {{ selection.length }} track{{ selection.length > 1 ? "s" : "" }}
+          in queue
+        </p>
+        <RoundButton full-width @click="reviewQueue = true">
+          Review Queue
+        </RoundButton>
+      </div>
     </div>
     <SelectionReview
       :disabled="addTracksTask.isRunning"
@@ -91,6 +93,7 @@ import {
   Track
 } from "spotify-web-api-ts/types/types/SpotifyObjects";
 import { AugmentedTrack } from "@/types/addtracks";
+import { formatDuration } from "@/api/helpers";
 import Header from "@/components/standalone/Header.vue";
 import SearchBar from "@/components/standalone/SearchBar.vue";
 import MediaEntity from "@/components/standalone/MediaEntity.vue";
@@ -189,14 +192,6 @@ export default defineComponent({
           });
       }
     },
-    formatDuration(inMs: number) {
-      const secs = Math.ceil(inMs / 1000);
-      let secRemainder: number | string = secs % 60;
-      if (secRemainder < 10) {
-        secRemainder = `0${secRemainder}`;
-      }
-      return `${Math.floor(secs / 60)}:${secRemainder}`;
-    },
     jumpToAlbums() {
       const albumResults = this.$refs.albums as HTMLDivElement;
       const offset = albumResults.offsetTop - window.innerHeight / 3;
@@ -231,6 +226,7 @@ export default defineComponent({
   setup() {
     return {
       addTracksTask: addTracks(),
+      formatDuration,
       getPlaylistTask: getPlaylist(),
       searchTask: search(),
       store: useStore()
@@ -252,24 +248,6 @@ export default defineComponent({
   }
   h4 {
     margin-bottom: 0.5rem;
-  }
-  .jump {
-    text-align: right;
-    font-weight: 700;
-    cursor: pointer;
-  }
-}
-.queue {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  background: white;
-  width: 100%;
-  padding: 1.5rem;
-  border-top: 1px solid rgba(0, 0, 0, 0.2);
-
-  p {
-    margin-top: 0;
   }
 }
 </style>

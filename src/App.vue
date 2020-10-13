@@ -88,6 +88,32 @@ export default defineComponent({
 }
 .view-body {
   margin: 0 2rem;
+
+  .view-action {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    background: white;
+    width: 100%;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+    z-index: 5;
+
+    .view-action-content {
+      margin: 0 auto;
+      max-width: calc(768px);
+      padding: 1.5rem 0;
+      width: 100%;
+
+      p {
+        margin-top: 0;
+      }
+    }
+  }
+}
+.jump-link {
+  text-align: right;
+  font-weight: 700;
+  cursor: pointer;
 }
 @media screen and (max-width: 480px) {
   .app-view[with-margin="true"] {

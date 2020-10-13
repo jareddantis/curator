@@ -203,11 +203,11 @@ export default defineComponent({
     margin-bottom: 1.5rem;
 
     .preview-tooltip {
-      bottom: 3rem;
+      bottom: 3.5rem;
     }
     .progress {
       top: -0.75rem;
-      height: 3.5rem;
+      height: 3.75rem;
     }
     &:not(:last-child):after {
       bottom: -0.75rem;
