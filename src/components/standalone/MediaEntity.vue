@@ -68,7 +68,7 @@ export default defineComponent({
         if (this.preview) {
           this.player.play();
         }
-      }, 500);
+      }, 300);
     },
     mouseUp(e?: MouseEvent | TouchEvent) {
       this.showTooltip = false;
