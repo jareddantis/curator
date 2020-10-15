@@ -8,7 +8,7 @@ export default function editPlaylistDetails() {
     spotify.setAccessToken(token);
     yield spotify.playlists.changePlaylistDetails(id, {
       collaborative,
-      description,
+      ...(description.length && { description }),
       name,
       public: isPublic
     });
