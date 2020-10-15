@@ -122,6 +122,7 @@ export default defineComponent({
   computed: mapState(["id", "target"]),
   data() {
     return {
+      playlistLength: 0,
       playlistName: "...",
       selection: [] as AugmentedTrack[],
       selectionURIs: [] as string[],
@@ -146,7 +147,7 @@ export default defineComponent({
     this.store
       .dispatch("getUpdatedToken")
       .then(token => this.getPlaylistTask.perform(token, this.target[0]))
-      .then(({ name, owner }) => {
+      .then(({ name, owner, tracks }) => {
         if (owner.id !== this.id) {
           window.alert(
             `Sorry, it looks like you do not own the playlist ${name}.`
@@ -154,6 +155,14 @@ export default defineComponent({
           this.$router.push("/");
           return;
         }
+        if (tracks.length >= 10000) {
+          window.alert(
+            `The playlist ${name} already has the maximum number of tracks!`
+          );
+          this.$router.push("/");
+          return;
+        }
+        this.playlistLength = tracks.length;
         this.playlistName = name;
         (this.$refs.searchbar as typeof SearchBar).focus();
       });
@@ -166,13 +175,21 @@ export default defineComponent({
       );
     },
     addTracks() {
-      this.store
-        .dispatch("getUpdatedToken")
-        .then(token =>
-          this.addTracksTask.perform(token, this.target[0], this.selection)
-        )
-        .then(() => this.$router.push("/"))
-        .catch(e => window.alert(e));
+      if (this.playlistLength + this.selection.length <= 10000) {
+        this.store
+          .dispatch("getUpdatedToken")
+          .then(token =>
+            this.addTracksTask.perform(token, this.target[0], this.selection)
+          )
+          .then(() => this.$router.push("/"))
+          .catch(e => window.alert(e));
+      } else {
+        window.alert(
+          `The maximum number of tracks you can add to ${
+            this.playlistName
+          } right now is ${10000 - this.playlistLength}.`
+        );
+      }
     },
     doSearch(query: string) {
       if (query.length) {
