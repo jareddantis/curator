@@ -1,12 +1,17 @@
 <template>
   <div class="view-body">
     <Header :border="results.ready">
-      <template v-slot:default
-        >Add tracks for &quot;{{ playlistName }}&quot;</template
-      >
-      <template v-slot:subtitle>Enter a song or an album name.</template>
+      <template v-slot:default>
+        Add tracks for &quot;{{ playlistName }}&quot;
+      </template>
+      <template v-slot:subtitle>Enter a search query.</template>
       <template v-slot:body>
-        <SearchBar id="track-search" @search="doSearch" ref="searchbar" />
+        <SearchBar
+          id="track-search"
+          @search="doSearch"
+          ref="searchbar"
+          :disabled="getPlaylistTask.isRunning || addTracksTask.isRunning"
+        />
       </template>
     </Header>
     <div class="search-results" v-show="results.ready">

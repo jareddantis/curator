@@ -1,7 +1,13 @@
 <template>
   <div class="styled-input">
     <label :for="id">{{ label }}</label>
-    <input type="search" :id="id" @input="submitSearch" ref="input" />
+    <input
+      type="search"
+      :id="id"
+      @input="submitSearch"
+      ref="input"
+      :disabled="disabled"
+    />
   </div>
 </template>
 
@@ -10,13 +16,6 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "SearchBar",
-  props: {
-    id: {
-      required: true,
-      type: String
-    },
-    label: String
-  },
   data() {
     return {
       lastSearch: 0
@@ -30,6 +29,14 @@ export default defineComponent({
       e.preventDefault();
       this.$emit("search", e.target.value);
     }
+  },
+  props: {
+    id: {
+      required: true,
+      type: String
+    },
+    label: String,
+    disabled: Boolean
   }
 });
 </script>
